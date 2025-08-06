@@ -1,0 +1,4 @@
+Input text,Action,Output text,Output Audio,timestamp
+hello,Translate to Chinese,,,2025-07-28 17:34:28.455257
+Hello i am a banker,Translate to Hindi,"हैं, मैं एक बैंकर हूँ।",,2025-07-28 17:58:38.372778
+what is python,Translate to Hindi,हॉलो,.gradio\flagged\Output Audio\93f2a3bdcb86c4a74999\output_audio.mp3,2025-07-28 18:12:41.069019

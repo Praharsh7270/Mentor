@@ -1,0 +1,419 @@
+{% extends "Base.html" %}
+
+{% block start %}
+<!-- Hero Section -->
+<section class="about-hero position-relative overflow-hidden">
+    <div class="hero-bg position-absolute w-100 h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.9;"></div>
+    <div class="container position-relative">
+        <div class="row min-vh-75 align-items-center py-5">
+            <div class="col-lg-8 mx-auto text-center text-white">
+                <h1 class="display-3 fw-bold mb-4 animate-fadeInUp">
+                    About <span class="text-warning">Our Mission</span>
+                </h1>
+                <p class="lead mb-4 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    We're revolutionizing mentorship through AI-powered technology, connecting passionate learners 
+                    with experienced professionals across the globe.
+                </p>
+                <div class="d-flex justify-content-center gap-4 mt-4 animate-fadeInUp" style="animation-delay: 0.4s;">
+                    <div class="text-center">
+                        <div class="display-6 fw-bold text-warning">500+</div>
+                        <small>Mentors</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="display-6 fw-bold text-warning">2K+</div>
+                        <small>Students</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="display-6 fw-bold text-warning">15+</div>
+                        <small>Languages</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="story-content">
+                    <h2 class="display-5 fw-bold text-dark mb-4">Our Story</h2>
+                    <p class="lead text-muted mb-4">
+                        Founded in 2023, our platform emerged from a simple yet powerful vision: to make quality mentorship 
+                        accessible to everyone, regardless of language barriers or geographical boundaries.
+                    </p>
+                    <div class="story-points">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="icon-circle bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-lightbulb text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="fw-bold mb-1">Innovation</h5>
+                                <p class="text-muted mb-0">Leveraging AI to break down communication barriers and enhance learning experiences.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="icon-circle bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-globe text-success"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="fw-bold mb-1">Global Reach</h5>
+                                <p class="text-muted mb-0">Connecting mentors and mentees from different continents and cultures.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <div class="flex-shrink-0">
+                                <div class="icon-circle bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-heart text-warning"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="fw-bold mb-1">Impact</h5>
+                                <p class="text-muted mb-0">Creating meaningful relationships that transform careers and lives.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="story-visual text-center">
+                    <div class="floating-elements position-relative">
+                        <div class="main-circle bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 300px; height: 300px;">
+                            <i class="fas fa-users fa-5x text-primary pulse-animation"></i>
+                        </div>
+                        <div class="floating-icon floating-icon-1 position-absolute">
+                            <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="fas fa-brain text-white fa-2x"></i>
+                            </div>
+                        </div>
+                        <div class="floating-icon floating-icon-2 position-absolute">
+                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="fas fa-language text-white fa-2x"></i>
+                            </div>
+                        </div>
+                        <div class="floating-icon floating-icon-3 position-absolute">
+                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="fas fa-rocket text-white fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Our Core Values</h2>
+            <p class="lead text-muted">The principles that guide everything we do</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card text-center p-4 bg-white rounded-4 h-100 shadow-sm">
+                    <div class="value-icon mb-3">
+                        <div class="icon-circle bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-handshake fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">Trust</h4>
+                    <p class="text-muted">Building authentic relationships based on mutual respect and reliability.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card text-center p-4 bg-white rounded-4 h-100 shadow-sm">
+                    <div class="value-icon mb-3">
+                        <div class="icon-circle bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-seedling fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">Growth</h4>
+                    <p class="text-muted">Fostering continuous learning and personal development for everyone.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card text-center p-4 bg-white rounded-4 h-100 shadow-sm">
+                    <div class="value-icon mb-3">
+                        <div class="icon-circle bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-star fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">Excellence</h4>
+                    <p class="text-muted">Striving for the highest quality in every interaction and feature.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="value-card text-center p-4 bg-white rounded-4 h-100 shadow-sm">
+                    <div class="value-icon mb-3">
+                        <div class="icon-circle bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-puzzle-piece fa-2x text-info"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">Inclusion</h4>
+                    <p class="text-muted">Creating a welcoming space for diverse backgrounds and perspectives.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Meet Our Team</h2>
+            <p class="lead text-muted">The passionate individuals behind our platform</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="team-card text-center p-4 bg-light rounded-4 h-100">
+                    <div class="team-avatar mb-3">
+                        <div class="avatar-circle bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                            <i class="fas fa-user fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-1">Sarah Johnson</h5>
+                    <p class="text-primary mb-2">Founder & CEO</p>
+                    <p class="text-muted small">Former tech executive passionate about education and mentorship. 10+ years in EdTech.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-info me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-danger"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="team-card text-center p-4 bg-light rounded-4 h-100">
+                    <div class="team-avatar mb-3">
+                        <div class="avatar-circle bg-success rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                            <i class="fas fa-user fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-1">Dr. Alex Chen</h5>
+                    <p class="text-success mb-2">Head of AI Development</p>
+                    <p class="text-muted small">AI researcher with PhD in Machine Learning. Specializes in NLP and translation systems.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-info me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-danger"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="team-card text-center p-4 bg-light rounded-4 h-100">
+                    <div class="team-avatar mb-3">
+                        <div class="avatar-circle bg-warning rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                            <i class="fas fa-user fa-3x text-white"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-1">Maria Rodriguez</h5>
+                    <p class="text-warning mb-2">Community Manager</p>
+                    <p class="text-muted small">Community building expert focused on creating meaningful mentor-mentee connections.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-primary me-2"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-info me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-danger"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="display-5 fw-bold mb-4">
+                    <span class="text-warning">Technology</span> That Powers Us
+                </h2>
+                <p class="lead mb-4">
+                    Our platform is built on cutting-edge technology stack, ensuring scalability, 
+                    security, and seamless user experience.
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="tech-item p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fab fa-python text-warning fa-2x mb-2"></i>
+                            <h6 class="fw-semibold">Python & Django</h6>
+                            <small>Robust backend framework</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tech-item p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fas fa-brain text-warning fa-2x mb-2"></i>
+                            <h6 class="fw-semibold">AI Models</h6>
+                            <small>Advanced language processing</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tech-item p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fab fa-aws text-warning fa-2x mb-2"></i>
+                            <h6 class="fw-semibold">Cloud Infrastructure</h6>
+                            <small>Scalable and secure hosting</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tech-item p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fas fa-mobile-alt text-warning fa-2x mb-2"></i>
+                            <h6 class="fw-semibold">Responsive Design</h6>
+                            <small>Works on all devices</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="tech-visual text-center">
+                    <div class="tech-circle-container position-relative">
+                        <div class="main-tech-circle bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 250px; height: 250px;">
+                            <i class="fas fa-cogs fa-4x text-warning pulse-animation"></i>
+                        </div>
+                        <div class="orbit-1 position-absolute">
+                            <div class="orbit-item bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fab fa-js text-white"></i>
+                            </div>
+                        </div>
+                        <div class="orbit-2 position-absolute">
+                            <div class="orbit-item bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fab fa-html5 text-white"></i>
+                            </div>
+                        </div>
+                        <div class="orbit-3 position-absolute">
+                            <div class="orbit-item bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fab fa-css3 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold mb-3">Ready to Join Our Community?</h2>
+                <p class="lead mb-0">Be part of a global network that's transforming lives through mentorship and AI technology.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'register' %}" class="btn btn-warning btn-lg px-5 py-3 fw-semibold rounded-pill">
+                    <i class="fas fa-users me-2"></i>Join Us Today
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Custom CSS for About Page -->
+<style>
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+    
+    .animate-fadeInUp {
+        animation: fadeInUp 1s ease-out;
+    }
+    
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+    
+    .floating-icon {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .floating-icon-1 {
+        top: 10%;
+        right: 20%;
+        animation-delay: 0s;
+    }
+    
+    .floating-icon-2 {
+        bottom: 20%;
+        left: 10%;
+        animation-delay: 1s;
+    }
+    
+    .floating-icon-3 {
+        top: 60%;
+        right: 5%;
+        animation-delay: 2s;
+    }
+    
+    .orbit-1, .orbit-2, .orbit-3 {
+        animation: orbit 10s linear infinite;
+    }
+    
+    .orbit-1 {
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation-delay: 0s;
+    }
+    
+    .orbit-2 {
+        bottom: -25px;
+        left: 20%;
+        animation-delay: 3.33s;
+    }
+    
+    .orbit-3 {
+        top: 50%;
+        right: -25px;
+        transform: translateY(-50%);
+        animation-delay: 6.66s;
+    }
+    
+    .value-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+    }
+    
+    .team-card:hover {
+        transform: translateY(-3px);
+        transition: transform 0.3s ease;
+    }
+    
+    .value-card:hover .icon-circle {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes orbit {
+        0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+        100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+    }
+    
+    .about-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>
+{% endblock %}

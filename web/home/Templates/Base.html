@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Mentorship Platform{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Global Styles -->
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Fix horizontal scrollbar and layout issues */
+        * {
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 100vw;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        /* Prevent container overflow */
+        .container, .container-fluid {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        
+        .col, [class*="col-"] {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: #ffc107;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        .btn-gradient-primary {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            color: white;
+        }
+        
+        .navbar {
+            backdrop-filter: blur(20px);
+            background: rgba(102, 126, 234, 0.95) !important;
+            box-shadow: var(--shadow-lg);
+            padding: 0.5rem 0;
+        }
+        
+        /* Custom dropdown styles */
+        .dropdown-menu {
+            border: none;
+            box-shadow: var(--shadow-lg);
+            border-radius: 12px;
+            padding: 0.5rem 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            margin-top: 8px;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 0 0.5rem;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        
+        .dropdown-divider {
+            margin: 0.5rem 1rem;
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+        
+        /* User dropdown toggle styling */
+        .dropdown-toggle::after {
+            margin-left: 0.5em;
+        }
+        
+        .nav-link.dropdown-toggle {
+            display: flex;
+            align-items: center;
+        }
+        
+        footer {
+            background: var(--primary-gradient) !important;
+        }
+        
+        /* Remove any gaps and ensure full width */
+        section {
+            width: 100%;
+            max-width: 100vw;
+        }
+        
+        /* Fix any margin/padding issues */
+        .hero-section {
+            margin-top: 0 !important;
+            padding-top: 70px !important;
+        }
+        
+        /* Toast/Popup Message Styles */
+        .toast-container {
+            max-width: 400px;
+        }
+        
+        .toast {
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInFromRight 0.5s ease-out;
+        }
+        
+        .toast-body {
+            font-weight: 500;
+            padding: 1rem;
+        }
+        
+        .toast .btn-close {
+            opacity: 0.8;
+        }
+        
+        .toast .btn-close:hover {
+            opacity: 1;
+        }
+        
+        /* Toast Animation */
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Different toast types */
+        .text-bg-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        }
+        
+        .text-bg-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        }
+        
+        .text-bg-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+        }
+        
+        .text-bg-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Toast/Popup Messages Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast align-items-center border-0 fade show mb-2
+                    {% if message.tags == 'error' %}text-bg-danger
+                    {% elif message.tags == 'success' %}text-bg-success
+                    {% elif message.tags == 'warning' %}text-bg-warning
+                    {% elif message.tags == 'info' %}text-bg-info
+                    {% else %}text-bg-primary{% endif %}" 
+                    role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+                    <div class="d-flex">
+                        <div class="toast-body d-flex align-items-center">
+                            <i class="fas 
+                                {% if message.tags == 'error' %}fa-exclamation-circle
+                                {% elif message.tags == 'success' %}fa-check-circle
+                                {% elif message.tags == 'warning' %}fa-exclamation-triangle
+                                {% elif message.tags == 'info' %}fa-info-circle
+                                {% else %}fa-bell{% endif %} me-2"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <!-- Modern Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <!-- Enhanced Brand/Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <div class="brand-icon me-2">
+                    <i class="fas fa-graduation-cap text-warning fs-3"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="fw-bold">AI</span><span class="text-warning">Mentor</span>
+                </div>
+            </a>
+            
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{% url 'home' %}">
+                            <i class="fas fa-home me-2"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{% url 'about' %}">
+                            <i class="fas fa-info-circle me-2"></i>About
+                        </a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        <!-- Dashboard links based on user role -->
+                        {% if user_role == 'mentor' %}
+                            <li class="nav-item">
+                                <a class="nav-link px-3" href="{% url 'mentor' %}">
+                                    <i class="fas fa-chalkboard-teacher me-2"></i>Mentor Dashboard
+                                </a>
+                            </li>
+                        {% elif user_role == 'student' %}
+                            <li class="nav-item">
+                                <a class="nav-link px-3" href="{% url 'student' %}">
+                                    <i class="fas fa-user-graduate me-2"></i>Student Dashboard
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                
+                <!-- Right Side Navigation -->
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <!-- Logged in user navigation -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-3" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-2"></i>{{ user.first_name|default:user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <!-- Logged out user navigation -->
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning fw-semibold px-4 py-2 rounded-pill ms-2" href="{% url 'register' %}">
+                                <i class="fas fa-rocket me-2"></i>Get Started
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content with no gap -->
+    <main class="flex-grow-1" style="margin-top: 70px;">
+        {% block start %}
+        
+        {% endblock %}
+    </main>
+    
+    <!-- Enhanced Footer -->
+    <footer class="text-white py-5 mt-auto">
+        <div class="container">
+            <div class="row">
+                <!-- Company Info -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-brand mb-3">
+                        <h5 class="fw-bold">
+                            <i class="fas fa-graduation-cap text-warning me-2"></i>
+                            AI<span class="text-warning">Mentor</span>
+                        </h5>
+                    </div>
+                    <p class="text-light mb-3">
+                        Empowering minds through AI-powered mentorship. Connecting passionate learners 
+                        with experienced professionals worldwide.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="text-warning me-3 fs-5"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-warning me-3 fs-5"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-warning me-3 fs-5"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-warning me-3 fs-5"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-warning fs-5"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-semibold text-warning mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'home' %}" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Home</a></li>
+                        <li class="mb-2"><a href="{% url 'about' %}" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Find Mentors</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Become a Mentor</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>AI Tools</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Support -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-semibold text-warning mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Help Center</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Terms of Service</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none"><i class="fas fa-chevron-right me-2 small"></i>Cookie Policy</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h6 class="fw-semibold text-warning mb-3">Stay Updated</h6>
+                    <p class="text-light mb-3">Subscribe to our newsletter for the latest updates and mentorship tips.</p>
+                    <div class="newsletter-form">
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control border-0 rounded-start" placeholder="Enter your email">
+                            <button class="btn btn-warning fw-semibold" type="button">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <small class="text-light">
+                            <i class="fas fa-envelope text-warning me-2"></i>support@aimentor.com<br>
+                            <i class="fas fa-phone text-warning me-2"></i>+1 (555) 123-4567
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <hr class="border-light opacity-25 my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-light">
+                        © 2024 AI Mentor Platform. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-light">
+                        Made with <i class="fas fa-heart text-danger"></i> for the future of education
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and Custom Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background change on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(102, 126, 234, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(102, 126, 234, 0.95)';
+            }
+        });
+
+        // Add active class to current nav item
+        const currentLocation = location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentLocation) {
+                link.classList.add('active');
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements with fade-in class
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Initialize Bootstrap Toasts
+        document.addEventListener('DOMContentLoaded', function() {
+            const toastElements = document.querySelectorAll('.toast');
+            toastElements.forEach(function(toastElement) {
+                const toast = new bootstrap.Toast(toastElement, {
+                    autohide: true,
+                    delay: 5000
+                });
+                toast.show();
+                
+                // Add sound notification for errors
+                if (toastElement.classList.contains('text-bg-danger')) {
+                    // Optional: You can add a subtle sound here if desired
+                    console.log('Error notification shown');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

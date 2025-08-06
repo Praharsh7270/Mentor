@@ -1,0 +1,1246 @@
+{% extends 'Base.html' %}
+{% load mentor_filters %}
+
+{% block start %}
+<!-- Mentor Dashboard -->
+<section class="mentor-dashboard py-5">
+    <div class="container">
+        <!-- Welcome Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="welcome-card bg-gradient-primary text-white rounded-4 p-4 p-md-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="fw-bold mb-3">Welcome, {{ user.first_name|default:user.username }}! 🎓</h1>
+                            <p class="lead mb-0">Ready to inspire and guide the next generation of learners? Your mentor dashboard is here to help you manage your mentoring activities effectively.</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="mentor-icon">
+                                <i class="fas fa-chalkboard-teacher fa-5x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-4">
+                <div class="stats-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="activity-icon bg-primary text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3 class="fw-bold text-primary">{{ questions|length }}</h3>
+                        <p class="text-muted mb-0">Total Questions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="activity-icon bg-warning text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <h3 class="fw-bold text-warning">{{ questions|filter_by_status:'pending'|length }}</h3>
+                        <p class="text-muted mb-0">Pending Questions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="activity-icon bg-success text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="fw-bold text-success">{{ questions|filter_by_status:'answered'|length }}</h3>
+                        <p class="text-muted mb-0">Answered Questions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="activity-icon bg-info text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="fw-bold text-info">{{ questions|unique_students|length }}</h3>
+                        <p class="text-muted mb-0">Active Students</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="fw-bold mb-0">
+                                <i class="fas fa-comments text-primary me-2"></i>Student Questions
+                            </h4>
+                            <div class="d-flex gap-2">
+                                <!-- Global Language Selector -->
+                                <select class="form-select form-select-sm" id="languageSelect">
+                                    <option value="english">🇺🇸 English</option>
+                                    <option value="chinese">🇨🇳 Chinese</option>
+                                    <option value="japanese">🇯🇵 Japanese</option>
+                                    <option value="hindi">🇮🇳 Hindi</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-success" id="translateAllBtn" onclick="translateAllContent()" title="Translate all questions and answers">
+                                    <i class="fas fa-language me-1"></i>Translate All
+                                </button>
+                                <select class="form-select form-select-sm" id="statusFilter" onchange="filterQuestions()">
+                                    <option value="all">All Questions</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="answered">Answered</option>
+                                </select>
+                                <select class="form-select form-select-sm" id="categoryFilter" onchange="filterQuestions()">
+                                    <option value="all">All Categories</option>
+                                    <option value="programming">Programming</option>
+                                    <option value="career">Career</option>
+                                    <option value="project">Project</option>
+                                    <option value="general">General</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if questions %}
+                            <div id="questions-container">
+                                {% for question in questions %}
+                                <div class="question-item border-bottom p-4" id="question-{{ question.id }}" data-status="{{ question.status }}" data-category="{{ question.category }}">>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="student-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-semibold mb-1">{{ question.student.first_name }} {{ question.student.last_name|default:question.student.username }}</h6>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>{{ question.created_at|date:"F d, Y \a\t g:i A" }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <h5 class="fw-bold text-dark mb-2 question-title">{{ question.title }}</h5>
+                                            <p class="text-muted mb-3 question-content">{{ question.content }}</p>
+                                        </div>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <!-- Translation Dropdown -->
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" id="translateDropdownQuestion{{ question.id }}" data-bs-toggle="dropdown" aria-expanded="false" title="Translate this question">
+                                                    <i class="fas fa-language me-1"></i>Translate
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="translateDropdownQuestion{{ question.id }}">
+                                                    <li><h6 class="dropdown-header"><i class="fas fa-globe me-2"></i>Translate To:</h6></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'english')">
+                                                        🇺🇸 English
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'chinese')">
+                                                        🇨🇳 Chinese (中文)
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'japanese')">
+                                                        🇯🇵 Japanese (日本語)
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'hindi')">
+                                                        🇮🇳 Hindi (हिंदी)
+                                                    </a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-muted" href="#" onclick="restoreOriginalText('question-{{ question.id }}')" id="restoreBtnQuestion{{ question.id }}" style="display: none;">
+                                                        <i class="fas fa-undo me-2"></i>Restore Original
+                                                    </a></li>
+                                                </ul>
+                                            </div>
+                                            
+                                            {% if question.category == 'programming' %}
+                                                <span class="badge bg-primary rounded-pill">Programming</span>
+                                            {% elif question.category == 'career' %}
+                                                <span class="badge bg-warning rounded-pill">Career</span>
+                                            {% elif question.category == 'project' %}
+                                                <span class="badge bg-info rounded-pill">Project</span>
+                                            {% elif question.category == 'general' %}
+                                                <span class="badge bg-success rounded-pill">General</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary rounded-pill">Other</span>
+                                            {% endif %}
+                                            
+                                            {% if question.status == 'pending' %}
+                                                <span class="badge bg-warning rounded-pill">
+                                                    <i class="fas fa-hourglass-half me-1"></i>Pending
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-success rounded-pill">
+                                                    <i class="fas fa-check me-1"></i>Answered
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Existing Answers -->
+                                    {% if question.answers.all %}
+                                        <div class="answers-section bg-light rounded p-3 mb-3">
+                                            <h6 class="fw-semibold mb-3">
+                                                <i class="fas fa-reply text-success me-2"></i>Answers ({{ question.answers.count }})
+                                            </h6>
+                                            {% for answer in question.answers.all %}
+                                                <div class="answer-item bg-white rounded p-3 mb-2" id="answer-{{ answer.id }}">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="mentor-avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px;">
+                                                                <i class="fas fa-user-tie"></i>
+                                                            </div>
+                                                            <div>
+                                                                <strong class="text-success">{{ answer.mentor.first_name }} {{ answer.mentor.last_name|default:answer.mentor.username }}</strong>
+                                                                <small class="text-muted ms-2">
+                                                                    <i class="fas fa-clock me-1"></i>{{ answer.created_at|date:"F d, Y \a\t g:i A" }}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Translation Dropdown for Answer -->
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-outline-info dropdown-toggle" type="button" id="translateDropdownAnswer{{ answer.id }}" data-bs-toggle="dropdown" aria-expanded="false" title="Translate this answer">
+                                                                <i class="fas fa-language me-1"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="translateDropdownAnswer{{ answer.id }}">
+                                                                <li><h6 class="dropdown-header"><i class="fas fa-globe me-2"></i>Translate To:</h6></li>
+                                                                <li><a class="dropdown-item" href="#" onclick="translateAnswerToLanguage('answer-{{ answer.id }}', 'english')">
+                                                                    🇺🇸 English
+                                                                </a></li>
+                                                                <li><a class="dropdown-item" href="#" onclick="translateAnswerToLanguage('answer-{{ answer.id }}', 'chinese')">
+                                                                    🇨🇳 Chinese (中文)
+                                                                </a></li>
+                                                                <li><a class="dropdown-item" href="#" onclick="translateAnswerToLanguage('answer-{{ answer.id }}', 'japanese')">
+                                                                    🇯🇵 Japanese (日本語)
+                                                                </a></li>
+                                                                <li><a class="dropdown-item" href="#" onclick="translateAnswerToLanguage('answer-{{ answer.id }}', 'hindi')">
+                                                                    🇮🇳 Hindi (हिंदी)
+                                                                </a></li>
+                                                                <li><hr class="dropdown-divider"></li>
+                                                                <li><a class="dropdown-item text-muted" href="#" onclick="restoreOriginalAnswerText('answer-{{ answer.id }}')" id="restoreBtnAnswer{{ answer.id }}" style="display: none;">
+                                                                    <i class="fas fa-undo me-2"></i>Restore Original
+                                                                </a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <p class="mb-0 answer-content">{{ answer.content }}</p>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    <!-- Reply Form -->
+                                    <div class="reply-section">
+                                        {% if question.status == 'pending' %}
+                                            <button class="btn btn-outline-primary btn-sm" onclick="toggleReplyForm('{{ question.id }}')">
+                                                <i class="fas fa-reply me-1"></i>Reply to this question
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-outline-success btn-sm" onclick="toggleReplyForm('{{ question.id }}')">
+                                                <i class="fas fa-plus me-1"></i>Add another answer
+                                            </button>
+                                        {% endif %}
+                                        
+                                        <div class="reply-form mt-3" id="replyForm{{ question.id }}" style="display: none;">
+                                            <form onsubmit="submitAnswer(event, '{{ question.id }}')">
+                                                {% csrf_token %}
+                                                <div class="mb-3">
+                                                    <label for="answerContent{{ question.id }}" class="form-label">
+                                                        Your Answer
+                                                        <button type="button" class="btn btn-sm btn-outline-info ms-2" onclick="getAIHelp('{{ question.id }}')" title="Get AI assistance with your current response">
+                                                            <i class="fas fa-lightbulb me-1"></i>AI Assist
+                                                        </button>
+                                                    </label>
+                                                    <textarea class="form-control" id="answerContent{{ question.id }}" name="answer_content" rows="4" placeholder="Write your detailed answer here..." required></textarea>
+                                                    <small class="form-text text-muted">
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        Tip: You can use "Answer with AI" to generate a complete response, or "AI Assist" to improve your current text.
+                                                    </small>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex gap-2">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fas fa-paper-plane me-1"></i>Submit Answer
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-secondary" onclick="toggleReplyForm('{{ question.id }}')">
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                    <button type="button" class="btn btn-outline-info" onclick="generateAIAnswer('{{ question.id }}')" title="Generate AI-powered answer">
+                                                        <i class="fas fa-robot me-1"></i>Answer with AI
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <div class="empty-icon mb-3">
+                                    <i class="fas fa-comments fa-3x text-muted opacity-50"></i>
+                                </div>
+                                <h6 class="text-muted">No questions yet</h6>
+                                <p class="text-muted small">Students haven't asked any questions yet. Check back later!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .stats-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .activity-item {
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        background-color: rgba(102, 126, 234, 0.05);
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .question-item {
+        transition: background-color 0.3s ease;
+    }
+    
+    .question-item:hover {
+        background-color: rgba(102, 126, 234, 0.02);
+    }
+    
+    .student-avatar, .mentor-avatar {
+        font-size: 14px;
+    }
+    
+    .reply-form {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    .answers-section {
+        border-left: 3px solid #28a745;
+    }
+    
+    .answer-item {
+        border-left: 2px solid #e9ecef;
+    }
+</style>
+
+<script>
+// Show/hide reply form
+function toggleReplyForm(questionId) {
+    const replyForm = document.getElementById(`replyForm${questionId}`);
+    if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+        replyForm.style.display = 'block';
+        // Focus on textarea
+        document.getElementById(`answerContent${questionId}`).focus();
+    } else {
+        replyForm.style.display = 'none';
+        // Clear the form
+        document.getElementById(`answerContent${questionId}`).value = '';
+    }
+}
+
+// Submit answer via AJAX
+async function submitAnswer(event, questionId) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const answerContent = document.getElementById(`answerContent${questionId}`).value.trim();
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    if (!answerContent) {
+        showToast('Please enter your answer', 'warning');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
+    submitBtn.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        
+        const formData = new FormData();
+        formData.append('question_id', questionId);
+        formData.append('answer_content', answerContent);
+        
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+            },
+            body: formData
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // Add the new answer to the page
+                addAnswerToQuestion(questionId, data.answer);
+                
+                // Hide the reply form and clear it
+                toggleReplyForm(questionId);
+                
+                // Update question status if it was pending
+                updateQuestionStatus(questionId, 'answered');
+                
+                showToast('Answer submitted successfully!', 'success');
+            } else {
+                showToast(data.error || 'Failed to submit answer', 'error');
+            }
+        } else {
+            showToast('Failed to submit answer. Please try again.', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error submitting answer:', error);
+        showToast('Network error. Please check your connection.', 'error');
+    } finally {
+        // Reset button state
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Add new answer to the question display
+function addAnswerToQuestion(questionId, answerData) {
+    const questionItem = document.querySelector(`[data-question-id="${questionId}"]`) || 
+                        document.querySelector(`#replyForm${questionId}`).closest('.question-item');
+    
+    let answersSection = questionItem.querySelector('.answers-section');
+    
+    if (!answersSection) {
+        // Create answers section if it doesn't exist
+        const replySection = questionItem.querySelector('.reply-section');
+        answersSection = document.createElement('div');
+        answersSection.className = 'answers-section bg-light rounded p-3 mb-3';
+        answersSection.innerHTML = `
+            <h6 class="fw-semibold mb-3">
+                <i class="fas fa-reply text-success me-2"></i>Answers (1)
+            </h6>
+        `;
+        replySection.parentNode.insertBefore(answersSection, replySection);
+    }
+    
+    // Create new answer HTML
+    const newAnswerHTML = `
+        <div class="answer-item bg-white rounded p-3 mb-2">
+            <div class="d-flex align-items-center mb-2">
+                <div class="mentor-avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px;">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <strong class="text-success">${answerData.mentor_name}</strong>
+                    <small class="text-muted ms-2">
+                        <i class="fas fa-clock me-1"></i>${answerData.created_at}
+                    </small>
+                </div>
+            </div>
+            <p class="mb-0">${answerData.content}</p>
+        </div>
+    `;
+    
+    // Add the new answer
+    answersSection.insertAdjacentHTML('beforeend', newAnswerHTML);
+    
+    // Update answer count
+    const answerHeader = answersSection.querySelector('h6');
+    const currentCount = answersSection.querySelectorAll('.answer-item').length;
+    answerHeader.innerHTML = `<i class="fas fa-reply text-success me-2"></i>Answers (${currentCount})`;
+}
+
+// Update question status badge
+function updateQuestionStatus(questionId, newStatus) {
+    const questionItem = document.querySelector(`#replyForm${questionId}`).closest('.question-item');
+    const statusBadge = questionItem.querySelector('.badge[class*="bg-warning"], .badge[class*="bg-success"]');
+    
+    if (statusBadge && newStatus === 'answered') {
+        statusBadge.className = 'badge bg-success rounded-pill';
+        statusBadge.innerHTML = '<i class="fas fa-check me-1"></i>Answered';
+        
+        // Update data attribute
+        questionItem.setAttribute('data-status', 'answered');
+        
+        // Update reply button text
+        const replyBtn = questionItem.querySelector('.btn-outline-primary, .btn-outline-success');
+        if (replyBtn) {
+            replyBtn.className = 'btn btn-outline-success btn-sm';
+            replyBtn.innerHTML = '<i class="fas fa-plus me-1"></i>Add another answer';
+        }
+    }
+}
+
+// Filter questions by status and category
+function filterQuestions() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const questionItems = document.querySelectorAll('.question-item');
+    
+    questionItems.forEach(item => {
+        const itemStatus = item.getAttribute('data-status');
+        const itemCategory = item.getAttribute('data-category');
+        
+        const statusMatch = statusFilter === 'all' || itemStatus === statusFilter;
+        const categoryMatch = categoryFilter === 'all' || itemCategory === categoryFilter;
+        
+        if (statusMatch && categoryMatch) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Show message if no questions match the filter
+    const visibleQuestions = document.querySelectorAll('.question-item[style="display: block"], .question-item:not([style*="display: none"])');
+    const questionsContainer = document.getElementById('questions-container');
+    
+    // Remove existing no-results message
+    const existingMessage = questionsContainer.querySelector('.no-results-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    if (visibleQuestions.length === 0 && questionItems.length > 0) {
+        const noResultsMessage = document.createElement('div');
+        noResultsMessage.className = 'no-results-message text-center py-5';
+        noResultsMessage.innerHTML = `
+            <div class="empty-icon mb-3">
+                <i class="fas fa-search fa-3x text-muted opacity-50"></i>
+            </div>
+            <h6 class="text-muted">No questions match your filters</h6>
+            <p class="text-muted small">Try adjusting your filter settings</p>
+        `;
+        questionsContainer.appendChild(noResultsMessage);
+    }
+}
+
+// Get AI help to improve current response
+async function getAIHelp(questionId) {
+    const textarea = document.getElementById(`answerContent${questionId}`);
+    
+    // Find the button using a more specific selector
+    const aiButton = document.querySelector(`button[onclick*="getAIHelp('${questionId}')"]`);
+    
+    if (!textarea) {
+        showToast('Answer textarea not found', 'error');
+        console.error('Textarea not found for question ID:', questionId);
+        return;
+    }
+    
+    if (!aiButton) {
+        showToast('AI Help button not found', 'error');
+        console.error('AI Help button not found for question ID:', questionId);
+        return;
+    }
+    
+    const currentText = textarea.value.trim();
+    if (!currentText) {
+        showToast('Please write something first, then click AI Assist to improve it.', 'info');
+        return;
+    }
+    
+    const originalBtnText = aiButton.innerHTML;
+    
+    // Show loading state
+    aiButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Getting AI Help...';
+    aiButton.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        
+        if (!csrfToken) {
+            throw new Error('CSRF token not found');
+        }
+        
+        const contextPrompt = `Please improve and expand the following mentor response to make it more comprehensive, detailed, and helpful: "${currentText}"`;
+        
+        console.log('Sending request to improve AI answer for question:', questionId);
+        
+        const response = await fetch('/generate-ai-answer/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({
+                question_id: questionId,
+                context_prompt: contextPrompt
+            })
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            if (data.success) {
+                // Replace the textarea content with the improved response
+                textarea.value = data.ai_answer;
+                textarea.focus();
+                
+                // Scroll to the textarea
+                textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                showToast('Your response has been improved with AI assistance!', 'success');
+            } else {
+                showToast(data.error || 'Failed to get AI assistance', 'error');
+            }
+        } else {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            showToast('Failed to get AI assistance. Please try again.', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error getting AI help:', error);
+        showToast('Network error. Please check your connection.', 'error');
+    } finally {
+        // Reset button state
+        aiButton.innerHTML = originalBtnText;
+        aiButton.disabled = false;
+    }
+}
+
+// Show AI improvement in a modal with comparison
+function showAIImprovementModal(improvedAnswer, originalText, questionId) {
+    const modalId = `aiHelpModal${questionId}`;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById(modalId);
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create modal HTML with comparison
+    const modalHTML = `
+        <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="${modalId}Label">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>AI Assistance - Improved Response
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning d-flex align-items-center mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>
+                                <strong>AI Improvement:</strong> Compare your original response with the AI-enhanced version below.
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="fw-semibold mb-2 text-muted">Your Original Response:</h6>
+                                <div class="border rounded p-3 bg-light">
+                                    <p class="mb-0" style="white-space: pre-wrap;">${originalText}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="fw-semibold mb-2 text-success">AI Enhanced Response:</h6>
+                                <div class="border rounded p-3 bg-success bg-opacity-10">
+                                    <p class="mb-0 ai-improved-content" style="white-space: pre-wrap;">${improvedAnswer}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Keep Original
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="copyImprovedAnswer('${modalId}')">
+                            <i class="fas fa-copy me-1"></i>Copy Improved
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="useImprovedAnswer('${modalId}', ${questionId})">
+                            <i class="fas fa-check me-1"></i>Use Improved Version
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById(modalId));
+    modal.show();
+    
+    // Clean up modal when hidden
+    document.getElementById(modalId).addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+// Use improved AI answer
+function useImprovedAnswer(modalId, questionId) {
+    const modal = document.getElementById(modalId);
+    const improvedContent = modal.querySelector('.ai-improved-content').textContent;
+    const textarea = document.getElementById(`answerContent${questionId}`);
+    
+    if (textarea) {
+        textarea.value = improvedContent;
+        textarea.focus();
+        
+        // Close modal
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        modalInstance.hide();
+        
+        showToast('Your response has been improved with AI assistance!', 'success');
+    }
+}
+
+// Copy improved answer to clipboard
+async function copyImprovedAnswer(modalId) {
+    const modal = document.getElementById(modalId);
+    const improvedContent = modal.querySelector('.ai-improved-content').textContent;
+    
+    try {
+        await navigator.clipboard.writeText(improvedContent);
+        showToast('Improved answer copied to clipboard!', 'success');
+    } catch (error) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = improvedContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast('Improved answer copied to clipboard!', 'success');
+    }
+}
+
+// Generate AI answer for a question
+async function generateAIAnswer(questionId) {
+    const textarea = document.getElementById(`answerContent${questionId}`);
+    
+    // Find the button using a more specific selector
+    const aiButton = document.querySelector(`button[onclick*="generateAIAnswer('${questionId}')"]`);
+    
+    if (!textarea) {
+        showToast('Answer textarea not found', 'error');
+        console.error('Textarea not found for question ID:', questionId);
+        return;
+    }
+    
+    if (!aiButton) {
+        showToast('AI button not found', 'error');
+        console.error('AI button not found for question ID:', questionId);
+        return;
+    }
+    
+    const originalBtnText = aiButton.innerHTML;
+    
+    // Show loading state
+    aiButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating AI Answer...';
+    aiButton.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        
+        if (!csrfToken) {
+            throw new Error('CSRF token not found');
+        }
+        
+        // Get any existing text in the textarea as context
+        const existingText = textarea.value.trim();
+        const contextPrompt = existingText ? 
+            `The mentor has started writing: "${existingText}". Please expand and improve this response to make it more detailed and comprehensive.` : 
+            'Please provide a detailed, comprehensive answer to help the student understand this topic better.';
+        
+        console.log('Sending request to generate AI answer for question:', questionId);
+        
+        const response = await fetch('/generate-ai-answer/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({
+                question_id: questionId,
+                context_prompt: contextPrompt
+            })
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            if (data.success) {
+                // Directly populate the textarea with the AI answer
+                textarea.value = data.ai_answer;
+                textarea.focus();
+                
+                // Scroll to the textarea
+                textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                showToast('AI answer generated and added to your response!', 'success');
+            } else {
+                showToast(data.error || 'Failed to generate AI answer', 'error');
+            }
+        } else {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            showToast('Failed to generate AI answer. Please try again.', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error generating AI answer:', error);
+        showToast('Network error. Please check your connection.', 'error');
+    } finally {
+        // Reset button state
+        aiButton.innerHTML = originalBtnText;
+        aiButton.disabled = false;
+    }
+}
+
+// Show AI answer in a modal
+function showAIAnswerModal(aiAnswer, questionId) {
+    const modalId = `aiAnswerModal${questionId}`;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById(modalId);
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create modal HTML
+    const modalHTML = `
+        <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="${modalId}Label">
+                            <i class="fas fa-robot text-info me-2"></i>AI Generated Answer
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info d-flex align-items-center mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>
+                                <strong>AI Assistant:</strong> This answer was generated by AI. You can use it as-is, modify it, or use it as inspiration for your own response.
+                            </div>
+                        </div>
+                        <div class="ai-answer-content">
+                            <h6 class="fw-semibold mb-2">Generated Answer:</h6>
+                            <div class="border rounded p-3 bg-light">
+                                <p class="mb-0" style="white-space: pre-wrap;">${aiAnswer}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Close
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="copyAIAnswer('${modalId}', ${questionId})">
+                            <i class="fas fa-copy me-1"></i>Copy to Clipboard
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="useAIAnswer('${modalId}', ${questionId})">
+                            <i class="fas fa-check me-1"></i>Use This Answer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById(modalId));
+    modal.show();
+    
+    // Clean up modal when hidden
+    document.getElementById(modalId).addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+// Use AI answer in the textarea
+function useAIAnswer(modalId, questionId) {
+    const modal = document.getElementById(modalId);
+    const aiAnswerContent = modal.querySelector('.ai-answer-content p').textContent;
+    const textarea = document.getElementById(`answerContent${questionId}`);
+    
+    if (textarea) {
+        textarea.value = aiAnswerContent;
+        textarea.focus();
+        
+        // Close modal
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        modalInstance.hide();
+        
+        showToast('AI answer added to your response!', 'success');
+    }
+}
+
+// Copy AI answer to clipboard
+async function copyAIAnswer(modalId, questionId) {
+    const modal = document.getElementById(modalId);
+    const aiAnswerContent = modal.querySelector('.ai-answer-content p').textContent;
+    
+    try {
+        await navigator.clipboard.writeText(aiAnswerContent);
+        showToast('Answer copied to clipboard!', 'success');
+    } catch (error) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = aiAnswerContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast('Answer copied to clipboard!', 'success');
+    }
+}
+
+// Translation functions for questions
+async function translateQuestionToLanguage(questionId, targetLanguage) {
+    const questionItem = document.getElementById(questionId);
+    const titleElement = questionItem.querySelector('.question-title');
+    const contentElement = questionItem.querySelector('.question-content');
+    const dropdownBtn = questionItem.querySelector(`[id*="translateDropdownQuestion"]`);
+    const restoreBtn = questionItem.querySelector(`[id*="restoreBtnQuestion"]`);
+    
+    if (!titleElement || !contentElement || !dropdownBtn) {
+        showToast('Translation elements not found', 'error');
+        return;
+    }
+    
+    // Store original text if not already stored
+    if (!dropdownBtn.dataset.originalTitle) {
+        dropdownBtn.dataset.originalTitle = titleElement.textContent;
+        dropdownBtn.dataset.originalContent = contentElement.textContent;
+    }
+    
+    if (targetLanguage === 'english') {
+        // Restore original text
+        titleElement.textContent = dropdownBtn.dataset.originalTitle;
+        contentElement.textContent = dropdownBtn.dataset.originalContent;
+        
+        // Hide restore button and reset state
+        if (restoreBtn) restoreBtn.style.display = 'none';
+        dropdownBtn.dataset.currentLanguage = '';
+        dropdownBtn.innerHTML = '<i class="fas fa-language me-1"></i>Translate';
+        showToast('Restored to original text', 'info');
+        return;
+    }
+    
+    // Show loading state
+    const originalBtnText = dropdownBtn.innerHTML;
+    dropdownBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Translating...';
+    dropdownBtn.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        
+        // Translate title and content
+        const [titleResponse, contentResponse] = await Promise.all([
+            fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    text: dropdownBtn.dataset.originalTitle,
+                    language: targetLanguage
+                })
+            }),
+            fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    text: dropdownBtn.dataset.originalContent,
+                    language: targetLanguage
+                })
+            })
+        ]);
+        
+        if (titleResponse.ok && contentResponse.ok) {
+            const titleData = await titleResponse.json();
+            const contentData = await contentResponse.json();
+            
+            if (titleData.success && contentData.success) {
+                // Update the displayed text
+                titleElement.textContent = titleData.translated_text;
+                contentElement.textContent = contentData.translated_text;
+                
+                // Update button state
+                dropdownBtn.dataset.currentLanguage = targetLanguage;
+                dropdownBtn.innerHTML = `<i class="fas fa-language me-1"></i>${targetLanguage.charAt(0).toUpperCase() + targetLanguage.slice(1)}`;
+                
+                // Show restore button
+                if (restoreBtn) restoreBtn.style.display = 'block';
+                
+                showToast(`Question translated to ${targetLanguage}`, 'success');
+            } else {
+                throw new Error('Translation failed');
+            }
+        } else {
+            throw new Error('Network error');
+        }
+        
+    } catch (error) {
+        console.error('Translation error:', error);
+        showToast('Translation failed. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        dropdownBtn.innerHTML = originalBtnText;
+        dropdownBtn.disabled = false;
+    }
+}
+
+// Translation functions for answers
+async function translateAnswerToLanguage(answerId, targetLanguage) {
+    const answerItem = document.getElementById(answerId);
+    const contentElement = answerItem.querySelector('.answer-content');
+    const dropdownBtn = answerItem.querySelector(`[id*="translateDropdownAnswer"]`);
+    const restoreBtn = answerItem.querySelector(`[id*="restoreBtnAnswer"]`);
+    
+    if (!contentElement || !dropdownBtn) {
+        showToast('Translation elements not found', 'error');
+        return;
+    }
+    
+    // Store original text if not already stored
+    if (!dropdownBtn.dataset.originalContent) {
+        dropdownBtn.dataset.originalContent = contentElement.textContent;
+    }
+    
+    if (targetLanguage === 'english') {
+        // Restore original text
+        contentElement.textContent = dropdownBtn.dataset.originalContent;
+        
+        // Hide restore button and reset state
+        if (restoreBtn) restoreBtn.style.display = 'none';
+        dropdownBtn.dataset.currentLanguage = '';
+        dropdownBtn.innerHTML = '<i class="fas fa-language me-1"></i>';
+        showToast('Restored to original text', 'info');
+        return;
+    }
+    
+    // Show loading state
+    const originalBtnText = dropdownBtn.innerHTML;
+    dropdownBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>';
+    dropdownBtn.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        
+        const response = await fetch('/translate/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({
+                text: dropdownBtn.dataset.originalContent,
+                language: targetLanguage
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.success) {
+                // Update the displayed text
+                contentElement.textContent = data.translated_text;
+                
+                // Update button state
+                dropdownBtn.dataset.currentLanguage = targetLanguage;
+                dropdownBtn.innerHTML = `<i class="fas fa-language me-1"></i>`;
+                
+                // Show restore button
+                if (restoreBtn) restoreBtn.style.display = 'block';
+                
+                showToast(`Answer translated to ${targetLanguage}`, 'success');
+            } else {
+                throw new Error('Translation failed');
+            }
+        } else {
+            throw new Error('Network error');
+        }
+        
+    } catch (error) {
+        console.error('Translation error:', error);
+        showToast('Translation failed. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        dropdownBtn.innerHTML = originalBtnText;
+        dropdownBtn.disabled = false;
+    }
+}
+
+// Restore original text functions
+function restoreOriginalText(questionId) {
+    translateQuestionToLanguage(questionId, 'english');
+}
+
+function restoreOriginalAnswerText(answerId) {
+    translateAnswerToLanguage(answerId, 'english');
+}
+
+// Translate all visible content
+async function translateAllContent() {
+    const languageSelect = document.getElementById('languageSelect');
+    const selectedLanguage = languageSelect.value;
+    const translateAllBtn = document.getElementById('translateAllBtn');
+    const originalBtnText = translateAllBtn.innerHTML;
+    
+    if (selectedLanguage === 'english') {
+        showToast('Select a language other than English to translate all content.', 'info');
+        return;
+    }
+    
+    // Get all visible question items
+    const questionItems = document.querySelectorAll('.question-item[style="display: block"], .question-item:not([style*="display: none"])');
+    
+    if (questionItems.length === 0) {
+        showToast('No questions to translate', 'info');
+        return;
+    }
+    
+    // Show loading state
+    translateAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Translating All...';
+    translateAllBtn.disabled = true;
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    try {
+        // Process each visible question
+        for (const questionItem of questionItems) {
+            const questionId = questionItem.id;
+            
+            try {
+                // Translate the question
+                await translateQuestionToLanguage(questionId, selectedLanguage);
+                
+                // Translate all answers in this question
+                const answerItems = questionItem.querySelectorAll('[id^="answer-"]');
+                for (const answerItem of answerItems) {
+                    const answerId = answerItem.id;
+                    await translateAnswerToLanguage(answerId, selectedLanguage);
+                }
+                
+                successCount++;
+                
+                // Small delay to prevent overwhelming the API
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+            } catch (error) {
+                console.error(`Error translating question ${questionId}:`, error);
+                failCount++;
+            }
+        }
+        
+        // Show summary
+        if (successCount > 0 && failCount === 0) {
+            showToast(`Successfully translated all ${successCount} questions and answers to ${selectedLanguage}!`, 'success');
+        } else if (successCount > 0 && failCount > 0) {
+            showToast(`Translated ${successCount} questions successfully, ${failCount} failed.`, 'warning');
+        } else {
+            showToast('Translation failed for all questions.', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error in translateAllContent:', error);
+        showToast('Translation process failed. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        translateAllBtn.innerHTML = originalBtnText;
+        translateAllBtn.disabled = false;
+    }
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Create toast element
+    const toastId = 'toast-' + Date.now();
+    const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : type === 'warning' ? 'bg-warning' : 'bg-info';
+    
+    const toastHTML = `
+        <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    // Initialize and show toast
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, {
+        autohide: true,
+        delay: 5000
+    });
+    toast.show();
+    
+    // Remove toast element after it's hidden
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
+}
+</script>
+{% endblock %}

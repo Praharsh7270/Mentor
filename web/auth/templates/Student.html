@@ -1,0 +1,1454 @@
+{% extends 'Base.html' %}
+
+{% block start %}
+{% csrf_token %}
+<!-- Student Dashboard -->
+<section class="student-dashboard py-5">
+    <div class="container">
+        <!-- Welcome Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="welcome-card bg-gradient-success text-white rounded-4 p-4 p-md-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="fw-bold mb-3">Welcome back, {{ user.first_name|default:user.username }}! 📚</h1>
+                            <p class="lead mb-0">Ready to continue your learning journey? Explore your progress, connect with mentors, and achieve your goals!</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="student-icon">
+                                <i class="fas fa-user-graduate fa-5x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question & Answer Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card border-0 rounded-4 shadow-sm">
+                    <div class="card-header bg-transparent border-0 p-4 pb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mb-0" id="ask-mentor-title">Ask Your Mentor</h5>
+                            <div class="language-controls d-flex gap-2">
+                                <select class="form-select form-select-sm" id="languageSelect" style="max-width: 150px;">
+                                    <option value="english">🇺🇸 English</option>
+                                    <option value="chinese">🇨🇳 Chinese</option>
+                                    <option value="japanese">🇯🇵 Japanese</option>
+                                    <option value="hindi">🇮🇳 Hindi</option>
+                                </select>
+                                <button class="btn btn-outline-info btn-sm" id="translateBtn" onclick="translateContent()">
+                                    <i class="fas fa-language me-2"></i>Translate Interface
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" id="translateTextBtn" onclick="translateUserText()">
+                                    <i class="fas fa-text-height me-2"></i>Translate My Text
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Question Form -->
+                        <div class="question-form mb-4">
+                            <form id="questionForm" class="needs-validation" novalidate>
+                                <div class="mb-3">
+                                    <label for="questionTitle" class="form-label fw-semibold">Question Title</label>
+                                    <input type="text" class="form-control rounded-3" id="questionTitle" 
+                                           placeholder="What would you like to ask?" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a question title.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="questionContent" class="form-label fw-semibold">Question Details</label>
+                                    <textarea class="form-control rounded-3" id="questionContent" rows="4" 
+                                              placeholder="Describe your question in detail..." required></textarea>
+                                    <div class="invalid-feedback">
+                                        Please provide question details.
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="questionCategory" class="form-label fw-semibold">Category</label>
+                                    <select class="form-select rounded-3" id="questionCategory" required>
+                                        <option value="" disabled selected>Select a category</option>
+                                        <option value="programming">Programming</option>
+                                        <option value="career">Career Guidance</option>
+                                        <option value="project">Project Help</option>
+                                        <option value="general">General Learning</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a category.
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary rounded-3">
+                                        <i class="fas fa-paper-plane me-2"></i>Post Question
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary rounded-3" onclick="clearForm()">
+                                        <i class="fas fa-times me-2"></i>Clear
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Questions & Answers List -->
+                        <div class="questions-list">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0">Your Recent Questions</h6>
+                                <button class="btn btn-sm btn-outline-primary" id="translateAllBtn" onclick="translateAllQuestions()" style="display: none;">
+                                    <i class="fas fa-globe me-1"></i>Translate All Questions
+                                </button>
+                            </div>
+                            
+                            <!-- Questions will be dynamically loaded here -->
+                            <div id="questions-container">
+                                {% if questions %}
+                                    {% for question in questions %}
+                                    <div class="question-item card mb-3 border-0 bg-light" id="question-{{ question.id }}">
+                                        <div class="card-body p-3">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="fw-semibold mb-1 text-{% if question.category == 'programming' %}primary{% elif question.category == 'career' %}warning{% elif question.category == 'project' %}info{% elif question.category == 'general' %}success{% else %}secondary{% endif %} question-title">{{ question.title }}</h6>
+                                                <div class="d-flex gap-2 align-items-center">
+                                                    <span class="badge bg-{% if question.category == 'programming' %}primary{% elif question.category == 'career' %}warning{% elif question.category == 'project' %}info{% elif question.category == 'general' %}success{% else %}secondary{% endif %} rounded-pill">{{ question.category|title }}</span>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" id="translateDropdownquestion-{{ question.id }}" data-bs-toggle="dropdown" aria-expanded="false" title="Select language to translate">
+                                                            <i class="fas fa-language me-1"></i>Translate
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="translateDropdownquestion-{{ question.id }}">
+                                                            <li><h6 class="dropdown-header"><i class="fas fa-globe me-2"></i>Translate To:</h6></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'english')">
+                                                                🇺🇸 English
+                                                            </a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'chinese')">
+                                                                🇨🇳 Chinese (中文)
+                                                            </a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'japanese')">
+                                                                🇯🇵 Japanese (日本語)
+                                                            </a></li>
+                                                            <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('question-{{ question.id }}', 'hindi')">
+                                                                🇮🇳 Hindi (हिंदी)
+                                                            </a></li>
+                                                            <li><hr class="dropdown-divider"></li>
+                                                            <li><a class="dropdown-item text-muted" href="#" onclick="restoreOriginalText('question-{{ question.id }}')" id="restoreBtnquestion-{{ question.id }}" style="display: none;">
+                                                                <i class="fas fa-undo me-2"></i>Restore Original
+                                                            </a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="text-muted small mb-2 question-content">{{ question.content }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>{{ question.created_at|date:"M d, Y \a\t g:i A" }}
+                                                </small>
+                                                <div class="question-actions">
+                                                    <button class="btn btn-sm btn-outline-{% if question.status == 'answered' %}success{% else %}info{% endif %}">
+                                                        <i class="fas fa-{% if question.status == 'answered' %}check-circle{% else %}hourglass-half{% endif %} me-1"></i>{% if question.status == 'answered' %}Answered{% else %}Waiting for Answer{% endif %}
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteQuestionFromDB('{{ question.id }}')">
+                                                        <i class="fas fa-trash me-1"></i>Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Empty state message -->
+                                    <div class="empty-state text-center py-5" id="empty-state">
+                                        <div class="empty-icon mb-3">
+                                            <i class="fas fa-question-circle fa-3x text-muted opacity-50"></i>
+                                        </div>
+                                        <h6 class="text-muted">No questions yet</h6>
+                                        <p class="text-muted small">Ask your first question to get started!</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+
+</section>
+
+<style>
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    
+    .stats-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .session-item, .achievement-item {
+        transition: background-color 0.3s ease;
+    }
+    
+    .session-item:hover {
+        background-color: rgba(102, 126, 234, 0.05) !important;
+    }
+    
+    .session-icon, .achievement-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .progress-bar {
+        transition: width 0.3s ease;
+    }
+    
+    /* Question & Answer Section Styles */
+    .question-item {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .question-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .question-form {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 1.5rem;
+    }
+    
+    .answer-section {
+        border-left: 3px solid #28a745;
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    .mentor-avatar {
+        flex-shrink: 0;
+    }
+    
+    .question-actions .btn {
+        font-size: 0.875rem;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            max-height: 0;
+            padding: 0;
+        }
+        to {
+            opacity: 1;
+            max-height: 500px;
+            padding: 1rem;
+        }
+    }
+    
+    /* Language Change Button and Controls */
+    .language-controls {
+        align-items: center;
+    }
+    
+    #languageSelect {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+    
+    #languageSelect:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    #translateBtn {
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    
+    #translateBtn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+    
+    #translateBtn:disabled {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    
+    #translateTextBtn {
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    
+    #translateTextBtn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    
+    #translateTextBtn:disabled {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    
+    .loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+    
+    .loading::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        border: 2px solid transparent;
+        border-top: 2px solid #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Empty State Styles */
+    .empty-state {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        border: 2px dashed #dee2e6;
+    }
+    
+    .empty-icon {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .empty-state h6 {
+        animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+    
+    .empty-state p {
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+    
+    /* Translation Dropdown Styles */
+    .dropdown-menu {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+    }
+    
+    .dropdown-item {
+        transition: all 0.2s ease;
+        padding: 8px 16px;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(2px);
+    }
+    
+    .dropdown-header {
+        color: #6c757d;
+        font-size: 0.875rem;
+        padding: 8px 16px 4px;
+    }
+    
+    .translation-badge {
+        animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+</style>
+
+<script>
+// Form validation and submission
+document.addEventListener('DOMContentLoaded', function() {
+    const questionForm = document.getElementById('questionForm');
+    
+    questionForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        if (this.checkValidity()) {
+            // Get form data
+            const title = document.getElementById('questionTitle').value;
+            const content = document.getElementById('questionContent').value;
+            const category = document.getElementById('questionCategory').value;
+            
+            // Submit to database
+            submitQuestionToDB(title, content, category);
+        } else {
+            this.classList.add('was-validated');
+        }
+    });
+    
+    // Show translate all button if there are questions
+    const questionsContainer = document.getElementById('questions-container');
+    const existingQuestions = questionsContainer.querySelectorAll('.question-item');
+    const translateAllBtn = document.getElementById('translateAllBtn');
+    
+    if (existingQuestions.length > 0 && translateAllBtn) {
+        translateAllBtn.style.display = 'inline-block';
+    }
+});
+
+// Submit question to database
+async function submitQuestionToDB(title, content, category) {
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Posting...';
+    submitBtn.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        formData.append('category', category);
+        
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+            },
+            body: formData
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // Add new question to the page
+                addNewQuestionFromDB(data.question);
+                
+                // Clear form
+                clearForm();
+                
+                // Show success message
+                showToast('Question posted successfully!', 'success');
+            } else {
+                showToast(data.error || 'Failed to post question', 'error');
+            }
+        } else {
+            showToast('Failed to post question. Please try again.', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error posting question:', error);
+        showToast('Network error. Please check your connection.', 'error');
+    } finally {
+        // Reset button state
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    }
+}
+
+function addNewQuestionFromDB(questionData) {
+    const questionsContainer = document.getElementById('questions-container');
+    const emptyState = document.getElementById('empty-state');
+    
+    const categoryColors = {
+        'programming': 'primary',
+        'career': 'warning', 
+        'project': 'info',
+        'general': 'success',
+        'other': 'secondary'
+    };
+    
+    // Hide empty state if it exists
+    if (emptyState) {
+        emptyState.style.display = 'none';
+    }
+    
+    const questionId = 'question-' + questionData.id;
+    
+    const newQuestionHTML = `
+        <div class="question-item card mb-3 border-0 bg-light" id="${questionId}">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="fw-semibold mb-1 text-${categoryColors[questionData.category]} question-title">${questionData.title}</h6>
+                    <div class="d-flex gap-2 align-items-center">
+                        <span class="badge bg-${categoryColors[questionData.category]} rounded-pill">${questionData.category.charAt(0).toUpperCase() + questionData.category.slice(1)}</span>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" id="translateDropdown${questionId}" data-bs-toggle="dropdown" aria-expanded="false" title="Select language to translate">
+                                <i class="fas fa-language me-1"></i>Translate
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="translateDropdown${questionId}">
+                                <li><h6 class="dropdown-header"><i class="fas fa-globe me-2"></i>Translate To:</h6></li>
+                                <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('${questionId}', 'english')">
+                                    🇺🇸 English
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('${questionId}', 'chinese')">
+                                    🇨🇳 Chinese (中文)
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('${questionId}', 'japanese')">
+                                    🇯🇵 Japanese (日本語)
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="translateQuestionToLanguage('${questionId}', 'hindi')">
+                                    🇮🇳 Hindi (हिंदी)
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-muted" href="#" onclick="restoreOriginalText('${questionId}')" id="restoreBtn${questionId}" style="display: none;">
+                                    <i class="fas fa-undo me-2"></i>Restore Original
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted small mb-2 question-content">${questionData.content}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>${questionData.created_at}
+                    </small>
+                    <div class="question-actions">
+                        <button class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-hourglass-half me-1"></i>Waiting for Answer
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteQuestionFromDB(${questionData.id})">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add the new question to the top of the container
+    questionsContainer.insertAdjacentHTML('afterbegin', newQuestionHTML);
+    
+    // Show the translate all button if there are questions
+    const translateAllBtn = document.getElementById('translateAllBtn');
+    if (translateAllBtn) {
+        translateAllBtn.style.display = 'inline-block';
+    }
+}
+
+// Delete question from database
+async function deleteQuestionFromDB(questionId) {
+    // Show confirmation dialog
+    if (confirm('Are you sure you want to delete this question? This action cannot be undone.')) {
+        try {
+            // Get CSRF token
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+            
+            const response = await fetch(`/delete-question/${questionId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    // Remove question from the page
+                    const questionItem = document.getElementById(`question-${questionId}`);
+                    if (questionItem) {
+                        questionItem.remove();
+                    }
+                    
+                    // Check if there are any questions left
+                    const questionsContainer = document.getElementById('questions-container');
+                    const remainingQuestions = questionsContainer.querySelectorAll('.question-item');
+                    const translateAllBtn = document.getElementById('translateAllBtn');
+                    
+                    if (remainingQuestions.length === 0) {
+                        // Show empty state again
+                        questionsContainer.innerHTML = `
+                            <div class="empty-state text-center py-5" id="empty-state">
+                                <div class="empty-icon mb-3">
+                                    <i class="fas fa-question-circle fa-3x text-muted opacity-50"></i>
+                                </div>
+                                <h6 class="text-muted">No questions yet</h6>
+                                <p class="text-muted small">Ask your first question to get started!</p>
+                            </div>
+                        `;
+                        
+                        // Hide translate all button
+                        if (translateAllBtn) {
+                            translateAllBtn.style.display = 'none';
+                        }
+                    }
+                    
+                    showToast('Question deleted successfully', 'success');
+                } else {
+                    showToast(data.error || 'Failed to delete question', 'error');
+                }
+            } else {
+                showToast('Failed to delete question. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Error deleting question:', error);
+            showToast('Network error. Please check your connection.', 'error');
+        }
+    }
+}
+
+function clearForm() {
+    document.getElementById('questionForm').reset();
+    document.getElementById('questionForm').classList.remove('was-validated');
+}
+
+function toggleAnswer(questionId) {
+    const answerSection = document.getElementById(`answer-${questionId}`);
+    const button = event.target.closest('button');
+    
+    if (answerSection.style.display === 'none' || answerSection.style.display === '') {
+        answerSection.style.display = 'block';
+        button.innerHTML = '<i class="fas fa-eye-slash me-1"></i>Hide Answer';
+        button.className = 'btn btn-sm btn-outline-warning';
+    } else {
+        answerSection.style.display = 'none';
+        button.innerHTML = '<i class="fas fa-comments me-1"></i>View Answer';
+        button.className = 'btn btn-sm btn-outline-success me-2';
+    }
+}
+
+// Function to translate all posted questions
+async function translateAllQuestions() {
+    const languageSelect = document.getElementById('languageSelect');
+    const selectedLanguage = languageSelect.value;
+    const translateAllBtn = document.getElementById('translateAllBtn');
+    const originalBtnText = translateAllBtn.innerHTML;
+    
+    if (selectedLanguage === 'english') {
+        showToast('Select a language other than English to translate all questions.', 'info');
+        return;
+    }
+    
+    // Get all question items
+    const questionItems = document.querySelectorAll('.question-item');
+    
+    if (questionItems.length === 0) {
+        showToast('No questions to translate', 'info');
+        return;
+    }
+    
+    // Show loading state
+    translateAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Translating All...';
+    translateAllBtn.disabled = true;
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    try {
+        // Process each question
+        for (const questionItem of questionItems) {
+            const questionId = questionItem.id;
+            const titleElement = questionItem.querySelector('.question-title');
+            const contentElement = questionItem.querySelector('.question-content');
+            const dropdownBtn = questionItem.querySelector(`#translateDropdown${questionId}`);
+            
+            if (!titleElement || !contentElement || !dropdownBtn) {
+                failCount++;
+                continue;
+            }
+            
+            // Skip if already translated
+            if (dropdownBtn.dataset.currentLanguage) {
+                continue;
+            }
+            
+            // Store original text if not already stored
+            if (!dropdownBtn.dataset.originalTitle) {
+                dropdownBtn.dataset.originalTitle = titleElement.textContent;
+                dropdownBtn.dataset.originalContent = contentElement.textContent;
+            }
+            
+            const originalTitle = dropdownBtn.dataset.originalTitle;
+            const originalContent = dropdownBtn.dataset.originalContent;
+            
+            try {
+                // Get CSRF token
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                                 document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                
+                // Translate title and content
+                const [titleResponse, contentResponse] = await Promise.all([
+                    fetch('/translate/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify({
+                            text: originalTitle,
+                            language: selectedLanguage
+                        })
+                    }),
+                    fetch('/translate/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify({
+                            text: originalContent,
+                            language: selectedLanguage
+                        })
+                    })
+                ]);
+                
+                if (titleResponse.ok && contentResponse.ok) {
+                    const titleData = await titleResponse.json();
+                    const contentData = await contentResponse.json();
+                    
+                    if (titleData.success && contentData.success) {
+                        // Update the question text
+                        titleElement.textContent = titleData.translated_text;
+                        contentElement.textContent = contentData.translated_text;
+                        
+                        // Remove any existing translation badge
+                        const existingBadge = questionItem.querySelector('.translation-badge');
+                        if (existingBadge) {
+                            existingBadge.remove();
+                        }
+                        
+                        // Add translation indicator
+                        const categoryBadge = questionItem.querySelector('.badge');
+                        if (categoryBadge) {
+                            const languageInfo = {
+                                'chinese': { name: '中文', flag: '🇨🇳' },
+                                'japanese': { name: '日本語', flag: '🇯🇵' },
+                                'hindi': { name: 'हिंदी', flag: '🇮🇳' }
+                            };
+                            
+                            const translationBadge = document.createElement('span');
+                            translationBadge.className = 'badge bg-success rounded-pill translation-badge ms-1';
+                            translationBadge.innerHTML = `${languageInfo[selectedLanguage].flag} ${languageInfo[selectedLanguage].name}`;
+                            categoryBadge.parentNode.insertBefore(translationBadge, categoryBadge.nextSibling);
+                        }
+                        
+                        // Update dropdown button
+                        const languageEmojis = {
+                            'chinese': '🇨🇳',
+                            'japanese': '🇯🇵',
+                            'hindi': '🇮🇳'
+                        };
+                        
+                        dropdownBtn.innerHTML = `<i class="fas fa-language me-1"></i>${languageEmojis[selectedLanguage]} Translated`;
+                        dropdownBtn.dataset.currentLanguage = selectedLanguage;
+                        
+                        // Show restore button
+                        const restoreBtn = questionItem.querySelector(`#restoreBtn${questionId}`);
+                        if (restoreBtn) {
+                            restoreBtn.style.display = 'block';
+                        }
+                        
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } else {
+                    failCount++;
+                }
+                
+                // Small delay to prevent overwhelming the server
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+            } catch (error) {
+                console.error(`Error translating question ${questionId}:`, error);
+                failCount++;
+            }
+        }
+        
+        // Show results
+        const languageNames = {
+            'english': 'English',
+            'chinese': 'Chinese',
+            'japanese': 'Japanese',
+            'hindi': 'Hindi'
+        };
+        
+        if (successCount > 0 && failCount === 0) {
+            showToast(`All ${successCount} questions translated to ${languageNames[selectedLanguage]} successfully!`, 'success');
+        } else if (successCount > 0 && failCount > 0) {
+            showToast(`${successCount} questions translated, ${failCount} failed`, 'warning');
+        } else if (failCount > 0) {
+            showToast(`Failed to translate questions. Please try again.`, 'error');
+        } else {
+            showToast('All questions are already translated', 'info');
+        }
+        
+    } catch (error) {
+        console.error('Bulk translation error:', error);
+        showToast('Bulk translation failed. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        translateAllBtn.innerHTML = originalBtnText;
+        translateAllBtn.disabled = false;
+    }
+}
+
+// Function to translate individual posted questions to specific language
+async function translateQuestionToLanguage(questionId, targetLanguage) {
+    const questionElement = document.getElementById(questionId);
+    
+    if (!questionElement) {
+        showToast('Question not found', 'error');
+        return;
+    }
+    
+    const titleElement = questionElement.querySelector('.question-title');
+    const contentElement = questionElement.querySelector('.question-content');
+    const dropdownBtn = questionElement.querySelector(`#translateDropdown${questionId}`);
+    const restoreBtn = questionElement.querySelector(`#restoreBtn${questionId}`);
+    
+    if (!titleElement || !contentElement) {
+        showToast('Question elements not found', 'error');
+        return;
+    }
+    
+    // Store original text if not already stored
+    if (!dropdownBtn.dataset.originalTitle) {
+        dropdownBtn.dataset.originalTitle = titleElement.textContent;
+        dropdownBtn.dataset.originalContent = contentElement.textContent;
+    }
+    
+    const originalTitle = dropdownBtn.dataset.originalTitle;
+    const originalContent = dropdownBtn.dataset.originalContent;
+    const originalBtnText = dropdownBtn.innerHTML;
+    
+    // Show loading state
+    dropdownBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Translating...';
+    dropdownBtn.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        
+        // Translate title and content
+        const [titleResponse, contentResponse] = await Promise.all([
+            fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    text: originalTitle,
+                    language: targetLanguage
+                })
+            }),
+            fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    text: originalContent,
+                    language: targetLanguage
+                })
+            })
+        ]);
+        
+        if (titleResponse.ok && contentResponse.ok) {
+            const titleData = await titleResponse.json();
+            const contentData = await contentResponse.json();
+            
+            if (titleData.success && contentData.success) {
+                // Update the question text
+                titleElement.textContent = titleData.translated_text;
+                contentElement.textContent = contentData.translated_text;
+                
+                // Add visual feedback
+                titleElement.style.color = '#28a745';
+                contentElement.style.color = '#28a745';
+                titleElement.style.fontWeight = 'bold';
+                
+                // Remove any existing translation badge
+                const existingBadge = questionElement.querySelector('.translation-badge');
+                if (existingBadge) {
+                    existingBadge.remove();
+                }
+                
+                // Add new translation indicator badge
+                const categoryBadge = questionElement.querySelector('.badge');
+                if (categoryBadge) {
+                    const languageInfo = {
+                        'english': { name: 'EN', flag: '🇺🇸' },
+                        'chinese': { name: '中文', flag: '🇨🇳' },
+                        'japanese': { name: '日本語', flag: '🇯🇵' },
+                        'hindi': { name: 'हिंदी', flag: '🇮🇳' }
+                    };
+                    
+                    const translationBadge = document.createElement('span');
+                    translationBadge.className = 'badge bg-success rounded-pill translation-badge ms-1';
+                    translationBadge.innerHTML = `${languageInfo[targetLanguage].flag} ${languageInfo[targetLanguage].name}`;
+                    categoryBadge.parentNode.insertBefore(translationBadge, categoryBadge.nextSibling);
+                }
+                
+                // Update button to show current language
+                const languageEmojis = {
+                    'english': '🇺🇸',
+                    'chinese': '🇨🇳', 
+                    'japanese': '🇯🇵',
+                    'hindi': '🇮🇳'
+                };
+                
+                dropdownBtn.innerHTML = `<i class="fas fa-language me-1"></i>${languageEmojis[targetLanguage]} Translated`;
+                dropdownBtn.dataset.currentLanguage = targetLanguage;
+                
+                // Show restore button
+                if (restoreBtn) {
+                    restoreBtn.style.display = 'block';
+                }
+                
+                // Reset colors after 3 seconds
+                setTimeout(() => {
+                    titleElement.style.color = '';
+                    contentElement.style.color = '';
+                    titleElement.style.fontWeight = '';
+                }, 3000);
+                
+                const languageNames = {
+                    'english': 'English',
+                    'chinese': 'Chinese',
+                    'japanese': 'Japanese',
+                    'hindi': 'Hindi'
+                };
+                
+                showToast(`Question translated to ${languageNames[targetLanguage]} using AI`, 'success');
+            } else {
+                showToast('Translation failed - AI service returned an error', 'error');
+            }
+        } else {
+            showToast('Failed to connect to translation service', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Translation error:', error);
+        showToast('Translation failed. Please check your connection and try again.', 'error');
+    } finally {
+        // Reset button state if translation failed
+        if (!dropdownBtn.dataset.currentLanguage) {
+            dropdownBtn.innerHTML = originalBtnText;
+        }
+        dropdownBtn.disabled = false;
+    }
+}
+
+// Function to restore original text
+function restoreOriginalText(questionId) {
+    const questionElement = document.getElementById(questionId);
+    
+    if (!questionElement) {
+        showToast('Question not found', 'error');
+        return;
+    }
+    
+    const titleElement = questionElement.querySelector('.question-title');
+    const contentElement = questionElement.querySelector('.question-content');
+    const dropdownBtn = questionElement.querySelector(`#translateDropdown${questionId}`);
+    const restoreBtn = questionElement.querySelector(`#restoreBtn${questionId}`);
+    
+    if (!titleElement || !contentElement || !dropdownBtn) {
+        showToast('Question elements not found', 'error');
+        return;
+    }
+    
+    const originalTitle = dropdownBtn.dataset.originalTitle;
+    const originalContent = dropdownBtn.dataset.originalContent;
+    
+    if (originalTitle && originalContent) {
+        // Restore original text
+        titleElement.textContent = originalTitle;
+        contentElement.textContent = originalContent;
+        
+        // Reset button
+        dropdownBtn.innerHTML = '<i class="fas fa-language me-1"></i>Translate';
+        delete dropdownBtn.dataset.currentLanguage;
+        
+        // Hide restore button
+        if (restoreBtn) {
+            restoreBtn.style.display = 'none';
+        }
+        
+        // Remove translation badge
+        const translationBadge = questionElement.querySelector('.translation-badge');
+        if (translationBadge) {
+            translationBadge.remove();
+        }
+        
+        showToast('Restored to original text', 'info');
+    } else {
+        showToast('Original text not found', 'error');
+    }
+}
+
+// Function to translate individual posted questions (Legacy - keep for compatibility)
+async function translateQuestionText(questionId) {
+    const languageSelect = document.getElementById('languageSelect');
+    const selectedLanguage = languageSelect.value;
+    const questionElement = document.getElementById(questionId);
+    
+    if (!questionElement) {
+        showToast('Question not found', 'error');
+        return;
+    }
+    
+    const titleElement = questionElement.querySelector('.question-title');
+    const contentElement = questionElement.querySelector('.question-content');
+    const translateBtn = questionElement.querySelector('button[onclick*="translateQuestionText"]');
+    
+    if (!titleElement || !contentElement) {
+        showToast('Question elements not found', 'error');
+        return;
+    }
+    
+    // Check if this is a reverse translation (back to original)
+    const isTranslated = translateBtn.dataset.translated === 'true';
+    const originalTitle = translateBtn.dataset.originalTitle || titleElement.textContent;
+    const originalContent = translateBtn.dataset.originalContent || contentElement.textContent;
+    const originalBtnText = translateBtn.innerHTML;
+    
+    if (isTranslated) {
+        // Restore original text
+        titleElement.textContent = originalTitle;
+        contentElement.textContent = originalContent;
+        
+        // Update button
+        translateBtn.innerHTML = '<i class="fas fa-language me-1"></i>Translate';
+        translateBtn.dataset.translated = 'false';
+        translateBtn.title = 'Translate this question to selected language';
+        
+        // Remove translation indicator
+        const translationBadge = questionElement.querySelector('.translation-badge');
+        if (translationBadge) {
+            translationBadge.remove();
+        }
+        
+        showToast('Restored to original text', 'info');
+        return;
+    }
+    
+    // Store original text if not already stored
+    if (!translateBtn.dataset.originalTitle) {
+        translateBtn.dataset.originalTitle = originalTitle;
+        translateBtn.dataset.originalContent = originalContent;
+    }
+    
+    // Show loading state
+    translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Translating...';
+    translateBtn.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        
+        // Translate title
+        const titleResponse = await fetch('/translate/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({
+                text: originalTitle,
+                language: selectedLanguage
+            })
+        });
+        
+        // Translate content
+        const contentResponse = await fetch('/translate/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({
+                text: originalContent,
+                language: selectedLanguage
+            })
+        });
+        
+        if (titleResponse.ok && contentResponse.ok) {
+            const titleData = await titleResponse.json();
+            const contentData = await contentResponse.json();
+            
+            if (titleData.success && contentData.success) {
+                // Update the question text
+                titleElement.textContent = titleData.translated_text;
+                contentElement.textContent = contentData.translated_text;
+                
+                // Add visual feedback
+                titleElement.style.color = '#28a745';
+                contentElement.style.color = '#28a745';
+                titleElement.style.fontWeight = 'bold';
+                
+                // Add translation indicator badge
+                const categoryBadge = questionElement.querySelector('.badge');
+                if (categoryBadge && !questionElement.querySelector('.translation-badge')) {
+                    const languageNames = {
+                        'english': 'EN',
+                        'chinese': '中文',
+                        'japanese': '日本語',
+                        'hindi': 'हिंदी'
+                    };
+                    
+                    const translationBadge = document.createElement('span');
+                    translationBadge.className = 'badge bg-success rounded-pill translation-badge ms-1';
+                    translationBadge.textContent = `Translated to ${languageNames[selectedLanguage]}`;
+                    categoryBadge.parentNode.insertBefore(translationBadge, categoryBadge.nextSibling);
+                }
+                
+                // Update button to allow reversing translation
+                translateBtn.innerHTML = '<i class="fas fa-undo me-1"></i>Original';
+                translateBtn.dataset.translated = 'true';
+                translateBtn.title = 'Show original text';
+                
+                // Reset colors after 3 seconds
+                setTimeout(() => {
+                    titleElement.style.color = '';
+                    contentElement.style.color = '';
+                    titleElement.style.fontWeight = '';
+                }, 3000);
+                
+                const languageNames = {
+                    'english': 'English',
+                    'chinese': 'Chinese',
+                    'japanese': 'Japanese',
+                    'hindi': 'Hindi'
+                };
+                
+                showToast(`Question translated to ${languageNames[selectedLanguage]} using AI`, 'success');
+            } else {
+                showToast('Translation failed - AI service returned an error', 'error');
+            }
+        } else {
+            showToast('Failed to connect to translation service', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Translation error:', error);
+        showToast('Translation failed. Please check your connection and try again.', 'error');
+    } finally {
+        // Reset button state if translation failed
+        if (!translateBtn.dataset.translated || translateBtn.dataset.translated === 'false') {
+            translateBtn.innerHTML = originalBtnText;
+        }
+        translateBtn.disabled = false;
+    }
+}
+
+// AI Language Translation Feature for User Text
+async function translateUserText() {
+    const translateTextBtn = document.getElementById('translateTextBtn');
+    const languageSelect = document.getElementById('languageSelect');
+    const selectedLanguage = languageSelect.value;
+    const originalBtnText = translateTextBtn.innerHTML;
+    
+    // Get user input fields
+    const questionTitle = document.getElementById('questionTitle');
+    const questionContent = document.getElementById('questionContent');
+    
+    // Check if there's text to translate
+    const titleText = questionTitle.value.trim();
+    const contentText = questionContent.value.trim();
+    
+    if (!titleText && !contentText) {
+        showToast('Please enter some text in the title or description fields to translate.', 'warning');
+        return;
+    }
+    
+    // Show loading state
+    translateTextBtn.classList.add('loading');
+    translateTextBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Translating...';
+    translateTextBtn.disabled = true;
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        
+        let translatedTitle = titleText;
+        let translatedContent = contentText;
+        
+        // Translate title if it exists
+        if (titleText) {
+            const titleResponse = await fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    text: titleText,
+                    language: selectedLanguage
+                })
+            });
+            
+            if (titleResponse.ok) {
+                const titleData = await titleResponse.json();
+                if (titleData.success) {
+                    translatedTitle = titleData.translated_text;
+                }
+            }
+        }
+        
+        // Translate content if it exists
+        if (contentText) {
+            const contentResponse = await fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    text: contentText,
+                    language: selectedLanguage
+                })
+            });
+            
+            if (contentResponse.ok) {
+                const contentData = await contentResponse.json();
+                if (contentData.success) {
+                    translatedContent = contentData.translated_text;
+                }
+            }
+        }
+        
+        // Update the form fields with translated text
+        questionTitle.value = translatedTitle;
+        questionContent.value = translatedContent;
+        
+        // Add visual feedback
+        if (titleText && translatedTitle !== titleText) {
+            questionTitle.style.borderColor = '#28a745';
+            questionTitle.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+        }
+        
+        if (contentText && translatedContent !== contentText) {
+            questionContent.style.borderColor = '#28a745';
+            questionContent.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+        }
+        
+        // Reset border colors after 3 seconds
+        setTimeout(() => {
+            questionTitle.style.borderColor = '';
+            questionTitle.style.boxShadow = '';
+            questionContent.style.borderColor = '';
+            questionContent.style.boxShadow = '';
+        }, 3000);
+        
+        // Show success message
+        const languageNames = {
+            'english': 'English',
+            'chinese': 'Chinese',
+            'japanese': 'Japanese',
+            'hindi': 'Hindi'
+        };
+        
+        showToast(`Text translated to ${languageNames[selectedLanguage]} using AI`, 'success');
+        
+    } catch (error) {
+        console.error('Translation error:', error);
+        showToast('Translation failed. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        translateTextBtn.classList.remove('loading');
+        translateTextBtn.innerHTML = originalBtnText;
+        translateTextBtn.disabled = false;
+    }
+}
+
+// AI Language Translation Feature
+async function translateContent() {
+    const translateBtn = document.getElementById('translateBtn');
+    const languageSelect = document.getElementById('languageSelect');
+    const selectedLanguage = languageSelect.value;
+    const originalText = translateBtn.innerHTML;
+    
+    // Show loading state
+    translateBtn.classList.add('loading');
+    translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Translating...';
+    translateBtn.disabled = true;
+    
+    // Define the text elements to translate
+    const elementsToTranslate = [
+        {
+            id: 'welcome-title',
+            selector: 'h1',
+            originalText: 'Welcome back, {{ user.first_name|default:user.username }}! 📚',
+            translationKey: 'Welcome back'
+        },
+        {
+            id: 'welcome-description', 
+            selector: '.lead',
+            originalText: 'Ready to continue your learning journey? Explore your progress, connect with mentors, and achieve your goals!',
+            translationKey: 'Ready to continue your learning journey? Explore your progress, connect with mentors, and achieve your goals!'
+        },
+        {
+            id: 'ask-mentor-title',
+            selector: '#ask-mentor-title',
+            originalText: 'Ask Your Mentor',
+            translationKey: 'Ask Your Mentor'
+        },
+        {
+            id: 'question-title-label',
+            selector: 'label[for="questionTitle"]',
+            originalText: 'Question Title',
+            translationKey: 'Question Title'
+        },
+        {
+            id: 'question-content-label',
+            selector: 'label[for="questionContent"]',
+            originalText: 'Question Details',
+            translationKey: 'Question Details'
+        },
+        {
+            id: 'question-category-label',
+            selector: 'label[for="questionCategory"]',
+            originalText: 'Category',
+            translationKey: 'Category'
+        },
+        {
+            id: 'post-question-btn',
+            selector: 'button[type="submit"]',
+            originalText: 'Post Question',
+            translationKey: 'Post Question'
+        }
+    ];
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        
+        // Translate each element
+        for (const element of elementsToTranslate) {
+            const response = await fetch('/translate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    text: element.translationKey,
+                    language: selectedLanguage
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    const targetElement = document.querySelector(element.selector);
+                    if (targetElement) {
+                        if (element.id === 'welcome-title') {
+                            // Keep the user's name in the welcome message
+                            const userName = '{{ user.first_name|default:user.username }}';
+                            targetElement.innerHTML = data.translated_text.replace('Welcome back', data.translated_text.split(',')[0]) + `, ${userName}! 📚`;
+                        } else if (element.id === 'post-question-btn') {
+                            targetElement.innerHTML = '<i class="fas fa-paper-plane me-2"></i>' + data.translated_text;
+                        } else {
+                            targetElement.textContent = data.translated_text;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Update placeholders
+        const questionTitle = document.getElementById('questionTitle');
+        const questionContent = document.getElementById('questionContent');
+        
+        if (selectedLanguage === 'chinese') {
+            questionTitle.placeholder = '您想问什么？';
+            questionContent.placeholder = '详细描述您的问题...';
+        } else if (selectedLanguage === 'japanese') {
+            questionTitle.placeholder = '何を質問したいですか？';
+            questionContent.placeholder = '質問を詳しく説明してください...';
+        } else if (selectedLanguage === 'hindi') {
+            questionTitle.placeholder = 'आप क्या पूछना चाहते हैं?';
+            questionContent.placeholder = 'अपने प्रश्न का विस्तार से वर्णन करें...';
+        } else {
+            questionTitle.placeholder = 'What would you like to ask?';
+            questionContent.placeholder = 'Describe your question in detail...';
+        }
+        
+        // Show success message
+        const languageNames = {
+            'english': 'English',
+            'chinese': 'Chinese',
+            'japanese': 'Japanese',
+            'hindi': 'Hindi'
+        };
+        
+        showToast(`Content translated to ${languageNames[selectedLanguage]} using AI`, 'info');
+        
+    } catch (error) {
+        console.error('Translation error:', error);
+        showToast('Translation failed. Please try again.', 'error');
+    } finally {
+        // Reset button state
+        translateBtn.classList.remove('loading');
+        translateBtn.innerHTML = originalText;
+        translateBtn.disabled = false;
+    }
+}
+
+function showToast(message, type = 'success') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Map error type to danger for Bootstrap styling
+    const bootstrapType = type === 'error' ? 'danger' : type;
+    
+    const iconMap = {
+        'success': 'check-circle',
+        'info': 'info-circle',
+        'warning': 'exclamation-triangle',
+        'danger': 'exclamation-triangle',
+        'error': 'exclamation-triangle'
+    };
+    
+    const toastHTML = `
+        <div class="toast align-items-center border-0 fade show mb-2 text-bg-${bootstrapType}" 
+             role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="fas fa-${iconMap[bootstrapType] || 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    // Initialize the new toast
+    const newToast = toastContainer.lastElementChild;
+    const toast = new bootstrap.Toast(newToast);
+    toast.show();
+}
+</script>
+{% endblock %}

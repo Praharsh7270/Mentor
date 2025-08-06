@@ -1,0 +1,583 @@
+{% extends "Base.html" %}
+
+{% block start %}
+<!-- Hero Section -->
+<section class="hero-section position-relative overflow-hidden" style="margin-top: -70px; padding-top: 70px;">
+  
+    <!-- Background Gradient with Dark Overlay -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); opacity: 0.9; z-index: 0;"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" style="opacity: 0.5; z-index: 1;"></div>
+
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row min-vh-100 align-items-center g-0">
+            <!-- Text Section -->
+            <div class="col-lg-6 px-3">
+                <div class="hero-content text-white">
+                    <h1 class="display-3 fw-bold mb-4 animate-fadeInUp">
+                        Transform Your Future with 
+                        <span class="text-warning">AI-Powered</span> Mentorship
+                    </h1>
+                    <p class="lead mb-4 animate-fadeInUp" style="animation-delay: 0.2s;">
+                        Connect with industry experts, get personalized guidance, and accelerate your career growth with cutting-edge AI assistance.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 animate-fadeInUp" style="animation-delay: 0.4s;">
+                        <a href="{% url 'register' %}" class="btn btn-warning btn-lg px-4 py-3 fw-semibold rounded-pill">
+                            <i class="fas fa-rocket me-2"></i>Get Started
+                        </a>
+                        <a href="#features" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold rounded-pill">
+                            <i class="fas fa-play-circle me-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image/Card Section -->
+            <div class="col-lg-6 px-3">
+                <div class="hero-image text-center animate-fadeInRight">
+                    <div class="floating-card p-4 bg-white rounded-4 shadow-lg mx-auto" style="max-width: 400px;">
+                        <i class="fas fa-brain fa-4x text-primary mb-3"></i>
+                        <h4 class="fw-bold text-dark">AI-Enhanced Learning</h4>
+                        <p class="text-muted">Experience the future of mentorship</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator position-absolute bottom-0 start-50 translate-middle-x mb-4">
+        <div class="scroll-arrow text-white animate-bounce">
+            <i class="fas fa-chevron-down fa-2x"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-number text-primary fw-bold display-4">500+</div>
+                    <div class="stat-label text-muted">Active Mentors</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-number text-success fw-bold display-4">2K+</div>
+                    <div class="stat-label text-muted">Students Helped</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-number text-info fw-bold display-4">15+</div>
+                    <div class="stat-label text-muted">AI Languages</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-number text-warning fw-bold display-4">98%</div>
+                    <div class="stat-label text-muted">Success Rate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Role Selection Section -->
+<section id="features" class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Choose Your Path</h2>
+            <p class="lead text-muted">Join our community as a mentor or mentee and start your journey</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="role-card h-100 position-relative overflow-hidden">
+                    <div class="card border-0 shadow-lg h-100 mentor-card">
+                        <div class="card-header bg-gradient-success text-white text-center py-4">
+                            <i class="fas fa-chalkboard-teacher fa-3x mb-3 text-dark"></i>
+                            <h3 class="fw-bold mb-0">Become a Mentor</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="features-list mb-4">
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-dark me-3"></i>
+                                    <span>Share your expertise with eager learners</span>
+                                </div>
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-3"></i>
+                                    <span>Build meaningful professional relationships</span>
+                                </div>
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-3"></i>
+                                    <span>Give back to the community</span>
+                                </div>
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-success me-3"></i>
+                                    <span>Enhance your leadership skills</span>
+                                </div>
+                            </div>
+                            <a href="{% url 'register' %}" class="btn btn-success btn-lg w-100 rounded-pill">
+                                <i class="fas fa-user-plus me-2"></i>Start Mentoring
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="role-card h-100 position-relative overflow-hidden">
+                    <div class="card border-0 shadow-lg h-100 mentee-card">
+                        <div class="card-header bg-gradient-info text-white text-center py-4">
+                            <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                            <h3 class="fw-bold mb-0">Find a Mentor</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="features-list mb-4">
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-info me-3"></i>
+                                    <span>Get personalized career guidance</span>
+                                </div>
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-info me-3"></i>
+                                    <span>Learn from industry professionals</span>
+                                </div>
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-info me-3"></i>
+                                    <span>Accelerate your skill development</span>
+                                </div>
+                                <div class="feature-item d-flex align-items-center mb-3">
+                                    <i class="fas fa-check-circle text-info me-3"></i>
+                                    <span>Build your professional network</span>
+                                </div>
+                            </div>
+                            <a href="{% url 'register' %}" class="btn btn-info btn-lg w-100 rounded-pill">
+                                <i class="fas fa-search me-2"></i>Find Mentor
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <!-- AI Features -->
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6 mb-3 mb-md-0" data-aos="zoom-in">
+                <img src="https://cdn-icons-png.flaticon.com/512/4712/4712107.png" alt="AI" class="img-fluid rounded-4 shadow-sm">
+            </div>
+            <div class="col-md-6" data-aos="fade-left">
+                <h2 class="fw-bold text-dark">AI-Powered Learning Assistance</h2>
+                <ul class="list-unstyled mt-3">
+                    <li class="mb-2">
+                        <i class="fas fa-robot text-primary me-2"></i> AI-based real-time translation
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-brain text-success me-2"></i> Simplified explanations for tough topics
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-globe text-info me-2"></i> Multilingual mentor-mentee interaction
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold mb-4">Benefits for Everyone</h2>
+        </div>
+        <div class="row text-center g-4">
+            <div class="col-md-4" data-aos="flip-left">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                    <i class="fas fa-user-friends fa-2x text-primary mb-3"></i>
+                    <h5 class="fw-semibold">For Students</h5>
+                    <p class="text-muted small">Clarity, support, and career direction from real-world experience.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-up">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                    <i class="fas fa-chalkboard-teacher fa-2x text-success mb-3"></i>
+                    <h5 class="fw-semibold">For Mentors</h5>
+                    <p class="text-muted small">A chance to give back and empower the next generation.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-right">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+                    <i class="fas fa-bolt fa-2x text-warning mb-3"></i>
+                    <h5 class="fw-semibold">For Institutions</h5>
+                    <p class="text-muted small">Foster leadership and learning in your community.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="bg-white rounded-4 p-5 mt-5 shadow-sm" data-aos="fade-up">
+            <h2 class="text-center fw-bold mb-4">What People Are Saying</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <blockquote class="blockquote text-muted">
+                        <p>"This program helped me connect with someone who truly understood my academic struggles."</p>
+                        <footer class="blockquote-footer">Ananya S., Mentee</footer>
+                    </blockquote>
+                </div>
+                <div class="col-md-4">
+                    <blockquote class="blockquote text-muted">
+                        <p>"As a mentor, it’s deeply fulfilling to see mentees grow and succeed with your guidance."</p>
+                        <footer class="blockquote-footer">Rahul M., Mentor</footer>
+                    </blockquote>
+                </div>
+                <div class="col-md-4">
+                    <blockquote class="blockquote text-muted">
+                        <p>"The AI support was surprisingly useful in breaking down complex topics. Loved it!"</p>
+                        <footer class="blockquote-footer">Megha R., Student</footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI Features Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="ai-visual text-center">
+                    <div class="ai-brain-container position-relative">
+                        <i class="fas fa-brain fa-5x text-warning mb-4 pulse-animation"></i>
+                        <div class="ai-particles">
+                            <div class="particle particle-1"></div>
+                            <div class="particle particle-2"></div>
+                            <div class="particle particle-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold mb-4">
+                    <span class="text-warning">AI-Powered</span> Learning Revolution
+                </h2>
+                <p class="lead mb-4">
+                    Experience the future of mentorship with our advanced AI technology that breaks down language barriers and enhances learning.
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="feature-box p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fas fa-language text-warning fa-2x mb-2"></i>
+                            <h5 class="fw-semibold">Real-time Translation</h5>
+                            <p class="small mb-0">Break language barriers with instant translation</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-box p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fas fa-lightbulb text-warning fa-2x mb-2"></i>
+                            <h5 class="fw-semibold">Smart Explanations</h5>
+                            <p class="small mb-0">Complex topics simplified with AI assistance</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-box p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fas fa-globe text-warning fa-2x mb-2"></i>
+                            <h5 class="fw-semibold">Global Connect</h5>
+                            <p class="small mb-0">Connect with mentors worldwide seamlessly</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-box p-3 rounded-3 bg-white bg-opacity-10">
+                            <i class="fas fa-chart-line text-warning fa-2x mb-2"></i>
+                            <h5 class="fw-semibold">Progress Tracking</h5>
+                            <p class="small mb-0">AI-powered analytics for better learning</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Why Choose Our Platform?</h2>
+            <p class="lead text-muted">Discover the advantages that set us apart</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="benefit-card text-center p-4 h-100">
+                    <div class="benefit-icon mb-4">
+                        <div class="icon-circle bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-users fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">For Students</h4>
+                    <ul class="list-unstyled text-muted">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Personalized career guidance</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Industry insights & trends</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Skill development roadmaps</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Network building opportunities</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="benefit-card text-center p-4 h-100">
+                    <div class="benefit-icon mb-4">
+                        <div class="icon-circle bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-award fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">For Mentors</h4>
+                    <ul class="list-unstyled text-muted">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Leadership skill enhancement</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Personal satisfaction from giving back</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional network expansion</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Recognition and rewards</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="benefit-card text-center p-4 h-100">
+                    <div class="benefit-icon mb-4">
+                        <div class="icon-circle bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-building fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">For Organizations</h4>
+                    <ul class="list-unstyled text-muted">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Employee engagement programs</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Talent pipeline development</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Brand reputation enhancement</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Social impact measurement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Success Stories</h2>
+            <p class="lead text-muted">Hear from our amazing community members</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="testimonial-card bg-white rounded-4 p-4 h-100 shadow-sm">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Ananya S.</h6>
+                            <small class="text-muted">Computer Science Student</small>
+                        </div>
+                    </div>
+                    <div class="rating mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                    </div>
+                    <p class="text-muted mb-0">"The AI translation feature helped me connect with a mentor from Japan. The guidance I received was invaluable for my career path in tech."</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="testimonial-card bg-white rounded-4 p-4 h-100 shadow-sm">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Rahul M.</h6>
+                            <small class="text-muted">Senior Software Engineer</small>
+                        </div>
+                    </div>
+                    <div class="rating mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                    </div>
+                    <p class="text-muted mb-0">"Mentoring through this platform has been incredibly rewarding. The AI tools make communication seamless, and I've helped students across different countries."</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="testimonial-card bg-white rounded-4 p-4 h-100 shadow-sm">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar bg-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Megha R.</h6>
+                            <small class="text-muted">Data Science Student</small>
+                        </div>
+                    </div>
+                    <div class="rating mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                    </div>
+                    <p class="text-muted mb-0">"The AI-powered explanations broke down complex machine learning concepts in a way that finally clicked for me. Amazing platform!"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold mb-3">Ready to Transform Your Future?</h2>
+                <p class="lead mb-0">Join thousands of students and professionals who are already benefiting from AI-powered mentorship.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'register' %}" class="btn btn-warning btn-lg px-5 py-3 fw-semibold rounded-pill">
+                    <i class="fas fa-rocket me-2"></i>Start Your Journey
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Custom CSS for animations -->
+<style>
+    .animate-fadeInUp {
+        animation: fadeInUp 1s ease-out;
+    }
+    
+    .animate-fadeInRight {
+        animation: fadeInRight 1s ease-out;
+    }
+    
+    .animate-bounce {
+        animation: bounce 2s infinite;
+    }
+    
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+    
+    .floating-card {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .particle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #ffc107;
+        border-radius: 50%;
+        animation: float 2s ease-in-out infinite;
+    }
+    
+    .particle-1 { top: 20%; left: 20%; animation-delay: 0s; }
+    .particle-2 { top: 60%; right: 20%; animation-delay: 0.5s; }
+    .particle-3 { bottom: 20%; left: 50%; animation-delay: 1s; }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+        40%, 43% { transform: translate3d(0,-15px,0); }
+        70% { transform: translate3d(0,-7px,0); }
+        90% { transform: translate3d(0,-3px,0); }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .hero-section {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+    }
+    
+    /* Ensure no horizontal overflow */
+    .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+    }
+    
+    [class*="col-"] {
+        max-width: 100%;
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .display-3 {
+            font-size: 2.5rem;
+        }
+        
+        .hero-content {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .floating-card {
+            max-width: 300px !important;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem !important;
+        }
+    }
+    
+    .role-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+    }
+    
+    .testimonial-card:hover {
+        transform: translateY(-3px);
+        transition: transform 0.3s ease;
+    }
+    
+    .benefit-card:hover .icon-circle {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+    }
+</style>
+{% endblock %}
