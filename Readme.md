@@ -22,32 +22,58 @@ An intelligent Django-based mentorship platform that connects students with ment
 - **Student Analytics**: Track mentoring activities and statistics
 
 ### 🔧 Technical Features
-- **Django 5.2 Framework**: Modern web framework with robust security
+- **Django Framework**: Modern web framework with robust security
 - **User Authentication**: Role-based access (Student/Mentor)
 - **Database Persistence**: SQLite database for storing questions, answers, and user data
-- **Responsive Design**: Bootstrap 5.3.7 for mobile-friendly interface
+- **Responsive Design**: Bootstrap for mobile-friendly interface
 - **AJAX Operations**: Seamless user experience without page reloads
 
 ## 🏗️ Project Structure
 
 ```
-Mentorship/
+mentor/
 ├── web/                          # Django project root
 │   ├── manage.py                 # Django management script
 │   ├── requirements.txt          # Python dependencies
 │   ├── db.sqlite3               # SQLite database
 │   ├── projectname/             # Django project settings
+│   │   ├── __init__.py
+│   │   ├── settings.py          # Django configuration
+│   │   ├── urls.py              # URL routing
+│   │   ├── wsgi.py              # WSGI configuration
+│   │   └── asgi.py              # ASGI configuration
 │   ├── auth/                    # Authentication app
 │   │   ├── models.py            # Database models (User, Question, Answer)
 │   │   ├── views.py             # View controllers and AI integration
+│   │   ├── admin.py             # Django admin configuration
+│   │   ├── apps.py              # App configuration
 │   │   ├── templates/           # HTML templates
-│   │   │   ├── Base.html        # Base template
-│   │   │   ├── student.html     # Student dashboard
-│   │   │   ├── mentor.html      # Mentor dashboard
-│   │   │   └── index.html       # Landing page
-│   │   └── templatetags/        # Custom template filters
+│   │   │   ├── Login.html       # Login page
+│   │   │   ├── Register.html    # Registration page
+│   │   │   ├── Student.html     # Student dashboard
+│   │   │   └── Mentor.html      # Mentor dashboard
+│   │   ├── templatetags/        # Custom template filters
+│   │   │   └── mentor_filters.py
+│   │   └── migrations/          # Database migrations
 │   └── home/                    # Home app
-├── saved_qwen_model/            # Pre-trained AI model
+│       ├── models.py
+│       ├── views.py
+│       ├── admin.py
+│       ├── Templates/           # Home app templates
+│       │   ├── Base.html        # Base template
+│       │   ├── Home.html        # Landing page
+│       │   └── About.html       # About page
+│       └── migrations/
+├── saved_qwen_model/            # Pre-trained AI model (config files only)
+│   ├── config.json              # Model configuration
+│   ├── tokenizer.json           # Tokenizer configuration
+│   ├── vocab.json               # Vocabulary
+│   └── ...                      # Other model config files
+├── translate.ipynb              # Translation development notebook
+├── Untitled.ipynb              # Additional notebooks
+├── output_audio.mp3             # Audio file
+└── README.md                    # Project documentation
+```
 ├── translate.ipynb              # Translation development notebook
 ├── anaconda_projects/           # Anaconda project files
 └── README.md                    # Project documentation
@@ -63,8 +89,8 @@ Mentorship/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Praharsh7270/Mentorship.git
-cd Mentorship
+git clone https://github.com/Praharsh7270/Mentor.git
+cd Mentor
 ```
 
 ### 2. Create Virtual Environment
@@ -79,14 +105,23 @@ cd web
 pip install -r requirements.txt
 ```
 
-### 4. Database Setup
+### 4. Model Setup
+**Important Note**: The large AI model file (`model.safetensors`) is not included in the repository due to GitHub's file size limitations. You will need to:
+
+1. Download the Qwen model separately from Hugging Face or another source
+2. Place the `model.safetensors` file in the `saved_qwen_model/` directory
+3. Ensure all model configuration files are present
+
+Alternatively, you can modify the code to use a different model or implement a different AI solution.
+
+### 5. Database Setup
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser  # Create admin account
 ```
 
-### 5. Run the Server
+### 6. Run the Server
 ```bash
 python manage.py runserver
 ```
@@ -146,18 +181,18 @@ The platform integrates a pre-trained Qwen model for:
 ## 🛠️ Technology Stack
 
 ### Backend
-- **Django 5.2**: Web framework
+- **Django**: Web framework
 - **SQLite**: Database
-- **PyTorch**: AI model framework
+- **PyTorch**: AI model framework (if using local model)
 - **Transformers**: Hugging Face library
 
 ### Frontend
-- **Bootstrap 5.3.7**: CSS framework
+- **Bootstrap**: CSS framework
 - **JavaScript ES6**: Dynamic interactions
 - **AJAX**: Asynchronous operations
 
 ### AI/ML
-- **Qwen Model**: Language model for answer generation
+- **Qwen Model**: Language model for answer generation (model file not included)
 - **Custom Translation API**: Multi-language support
 
 ## 🔧 Configuration
@@ -171,7 +206,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 ```
 
 ### AI Model Configuration
-The Qwen model is pre-configured in `saved_qwen_model/`. Ensure the model files are present for AI features to work.
+The Qwen model configuration files are in `saved_qwen_model/`. The large model file (`model.safetensors`) needs to be downloaded separately due to size constraints.
 
 ## 🚀 Deployment
 
@@ -209,7 +244,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Praharsh7270**
 - GitHub: [@Praharsh7270](https://github.com/Praharsh7270)
-- Project Link: [https://github.com/Praharsh7270/Mentorship](https://github.com/Praharsh7270/Mentorship)
+- Project Link: [https://github.com/Praharsh7270/Mentor](https://github.com/Praharsh7270/Mentor)
 
 ## 🙏 Acknowledgments
 
@@ -221,9 +256,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 If you encounter any issues or have questions:
-1. Check the [Issues](https://github.com/Praharsh7270/Mentorship/issues) section
+1. Check the [Issues](https://github.com/Praharsh7270/Mentor/issues) section
 2. Create a new issue with detailed information
 3. Contact the maintainer
+
+## ⚠️ Important Notes
+
+- **Large Model File**: The `model.safetensors` file (3.1GB) is not included in this repository due to GitHub's file size limitations
+- **Model Setup**: You'll need to download the Qwen model separately or configure an alternative AI solution
+- **Dependencies**: Ensure all Python dependencies are installed as specified in `requirements.txt`
 
 ---
 
